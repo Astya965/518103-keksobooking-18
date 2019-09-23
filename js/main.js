@@ -12,7 +12,8 @@ var mixArray = function (array) {
     var swap = array[k];
     array[k] = array[i];
     array[i] = swap;
-}
+  }
+
   return array;
 };
 
