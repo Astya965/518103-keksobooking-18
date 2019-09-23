@@ -7,13 +7,13 @@ var getRandomNumber = function (min, max) {
 
 // Перемешивание массива (на основе алгоритма Фишера-Йетса)
 var mixArray = function (array) {
-	for(var i = array.length - 1; i > 0; i--){
-		var k = Math.floor(Math.random()*(i + 1));
-		var swap = array[k];
-		array[k] = array[i];
-		array[i] = swap;
-	}
-	return array;
+  for (var i = array.length - 1; i > 0; i--) {
+    var k = Math.floor(Math.random() * (i + 1));
+    var swap = array[k];
+    array[k] = array[i];
+    array[i] = swap;
+}
+  return array;
 };
 
 // Генерация случайных данных
@@ -65,9 +65,9 @@ var generateOffersList = function () {
     var guests = getRandomNumber(1, 8);
     var checkin = checkinsTime[getRandomNumber(0, checkinsTime.length)];
     var checkout = checkoutsTime[getRandomNumber(0, checkoutsTime.length)];
-    var features = mixArray(featuresPool).slice(0, getRandomNumber(1 , featuresPool.length));
+    var features = mixArray(featuresPool).slice(0, getRandomNumber(1, featuresPool.length));
     var description = descriptions[getRandomNumber(0, descriptions.length)];
-    var photos = mixArray(photosPool).slice(0, getRandomNumber(1 , photosPool.length));
+    var photos = mixArray(photosPool).slice(0, getRandomNumber(1, photosPool.length));
     var positionX = getRandomNumber(0, 1200);
     var positionY = getRandomNumber(130, 630);
     var address = positionX + ', ' + positionY;
@@ -87,7 +87,7 @@ var generateOffersList = function () {
         'checkin': checkin,
         'checkout': checkout,
         'features': features,
-        'description':description,
+        'description': description,
         'photos': photos
       },
 
@@ -95,7 +95,7 @@ var generateOffersList = function () {
         'x': positionX,
         'y': positionY
       }
-    }
+    };
 
     offersList.push(offersItem);
   }
