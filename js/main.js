@@ -3,11 +3,7 @@
 var ACCOMMODATION_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var CHECKIN_CHECKOUT_TIME = ['12:00', '13:00', '14:00'];
 var FEATURES_POOL = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-var PHOTO_POOL = [
-  'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
-  'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
-];
+var PHOTO_COUNT = 3;
 var MIN_X = 0;
 var MAX_X = 1200;
 var MIN_Y = 130;
@@ -27,9 +23,9 @@ var showDialog = function () {
 
 /**
  * Выбор случайного числа в заданном промежутке
- * @param {number} min - Минимальное допустимое значение (включительно)
- * @param {number} max - Максимальное допустимое значение (включительно)
- * @return {number} Случайное целое число
+ * @param {Number} min - Минимальное допустимое значение (включительно)
+ * @param {Number} max - Максимальное допустимое значение (включительно)
+ * @return {Number} Случайное целое число
  */
 var getRandomNumber = function (min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -37,19 +33,19 @@ var getRandomNumber = function (min, max) {
 
 /**
  * Выбор случайного элемента массива
- * @param {array} array
- * @return {string|number|Object} Случайный элемент массива
+ * @param {Array} array
+ * @return {Any} Случайный элемент массива
  */
 var getRandomElement = function (array) {
-  var randonIndex = Math.floor(Math.random() * (array.length));
-  return array[randonIndex];
+  var randomIndex = Math.floor(Math.random() * (array.length));
+  return array[randomIndex];
 };
 
 /**
  * Перемешивание массива (на основе алгоритма Фишера-Йетса)
- * @param {array} array - Массив, который нужно перемешать
- * @return {array} Перемешенный массив
- *///
+ * @param {Array} array - Массив, который нужно перемешать
+ * @return {Array} Перемешенный массив
+ */
 var mixArray = function (array) {
   for (var i = array.length - 1; i > 0; i--) {
     var k = Math.floor(Math.random() * (i + 1));
@@ -62,8 +58,20 @@ var mixArray = function (array) {
 };
 
 /**
+ * Генерация массива фотографий
+ * @return {Array} Массив фотографий
+ */
+var getPhotosArray = function () {
+  var photosArray = [];
+  for (var i = 1; i <= PHOTO_COUNT; i++) {
+    photosArray.push('http://o0.github.io/assets/images/tokyo/hotel' + i + '.jpg');
+  }
+  return photosArray;
+};
+
+/**
  * Генерация данных объявления
- * @param {number} index - Передается индекс из цикла при генерации объявлений на карте (находится в showOffersPins())
+ * @param {Number} index - Передается индекс из цикла при генерации объявлений на карте (находится в showOffersPins())
  * @return {Object} Данные объявления
  */
 var generateOfferData = function (index) {
@@ -86,7 +94,7 @@ var generateOfferData = function (index) {
       'checkout': getRandomElement(CHECKIN_CHECKOUT_TIME),
       'features': mixArray(FEATURES_POOL).slice(0, getRandomNumber(1, FEATURES_POOL.length)),
       'description': 'Описание предложения ' + getRandomNumber(1, 99),
-      'photos': mixArray(PHOTO_POOL).slice(0, getRandomNumber(1, PHOTO_POOL.length))
+      'photos': mixArray(getPhotosArray()).slice(0, getRandomNumber(1, PHOTO_COUNT))
     },
 
     'location': {
@@ -99,7 +107,7 @@ var generateOfferData = function (index) {
 /**
  * Генерация пина объявления
  * @param {Object} itemData - Данные объявления, которые передаются в пин
- * @return {string} Шаблон для генерации пина объявления
+ * @return {HTMLElemet} Шаблон для генерации пина объявления
  */
 var renderOffer = function (itemData) {
   var pinElement = offersTimplate.cloneNode(true);
