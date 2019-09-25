@@ -1,6 +1,12 @@
 'use strict';
 
 var ACCOMMODATION_TYPES = ['palace', 'flat', 'house', 'bungalo'];
+var ACCOMMODATION_TYPES_MAP = {
+  'flat': 'Квартира',
+  'bungalo': 'Бунгало',
+  'house': 'Дом',
+  'palace': 'Дворец'
+};
 var CHECKIN_CHECKOUT_TIME = ['12:00', '13:00', '14:00'];
 var FEATURES_POOL = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var PHOTO_COUNT = 3;
@@ -12,7 +18,9 @@ var ADJUSTMENT_X = 25;
 var ADJUSTMENT_Y = 70;
 var OFFERS_LIST_LENGTH = 8;
 var mapElement = document.querySelector('.map');
+var mapFilters = document.querySelector('.map__filters-container');
 var offersTimplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var offersPopupTimplate = document.querySelector('#card').content;
 
 /**
  * @description Показывает карту
@@ -48,9 +56,9 @@ var getRandomElement = function (array) {
  */
 var mixArray = function (array) {
   for (var i = array.length - 1; i > 0; i--) {
-    var k = Math.floor(Math.random() * (i + 1));
-    var swap = array[k];
-    array[k] = array[i];
+    var j = Math.floor(Math.random() * (i + 1));
+    var swap = array[j];
+    array[j] = array[i];
     array[i] = swap;
   }
 
@@ -122,6 +130,52 @@ var renderOffer = function (itemData) {
 };
 
 /**
+ * Генерация модального окна с информацией об объявлении
+ * @param {Object} itemData - Данные объявления, которые передаются в объявление
+ */
+var showModalOffer = function (itemData) {
+  var popupOfferElement = offersPopupTimplate.cloneNode(true);
+  var popupOfferTitle = popupOfferElement.querySelector('.popup__title');
+  var popupOfferAddress = popupOfferElement.querySelector('.popup__text--address');
+  var popupOfferPrice = popupOfferElement.querySelector('.popup__text--price');
+  var popupOfferType = popupOfferElement.querySelector('.popup__type');
+  var popupOfferCapacity = popupOfferElement.querySelector('.popup__text--capacity');
+  var popupOfferTime = popupOfferElement.querySelector('.popup__text--time');
+  var popupOfferFeatures = popupOfferElement.querySelector('.popup__features');
+  var popupOfferDescription = popupOfferElement.querySelector('.popup__description');
+  var popupOfferPhotos = popupOfferElement.querySelector('.popup__photos');
+  var popupOfferPhotosElement = popupOfferPhotos.querySelector('.popup__photo');
+  var popupOfferAvatar = popupOfferElement.querySelector('.popup__avatar');
+
+  popupOfferTitle.textContent = itemData.offer.title;
+  popupOfferAddress.textContent = itemData.offer.address;
+  popupOfferPrice.textContent = itemData.offer.price + '₽/ночь';
+  popupOfferType.textContent = ACCOMMODATION_TYPES_MAP[itemData.offer.type];
+  popupOfferCapacity.textContent = itemData.offer.rooms + ' комнаты для ' + itemData.offer.guests + ' гостей';
+  popupOfferTime.textContent = 'Заезд после ' + itemData.offer.checkin + ', выезд до ' + itemData.offer.checkout;
+  popupOfferFeatures.innerHTML = '';
+  for (var i = 0; i < itemData.offer.features.length; i++) {
+    var createElement = document.createElement('li');
+    createElement.classList.add('popup__feature');
+    createElement.classList.add('popup__feature--' + itemData.offer.features[i]);
+    popupOfferFeatures.appendChild(createElement);
+  }
+  popupOfferDescription.textContent = itemData.offer.description;
+  for (var j = 0; j < itemData.offer.photos.length; j++) {
+    if (j === 0) {
+      popupOfferPhotosElement.src = itemData.offer.photos[j];
+    } else {
+      var clonedPhotosElement = popupOfferPhotosElement.cloneNode(true);
+      clonedPhotosElement.src = itemData.offer.photos[j];
+      popupOfferPhotos.appendChild(clonedPhotosElement);
+    }
+  }
+  popupOfferAvatar.src = itemData.author.avatar;
+
+  mapElement.insertBefore(popupOfferElement, mapFilters);
+};
+
+/**
  * @description Показывает пин объявления на карте
  */
 var showOffersPins = function () {
@@ -131,6 +185,10 @@ var showOffersPins = function () {
   for (var i = 0; i < OFFERS_LIST_LENGTH; i++) {
     var offerData = generateOfferData(i);
     fragment.appendChild(renderOffer(offerData));
+
+    if (i === 0) {
+      showModalOffer(generateOfferData(i));
+    }
   }
 
   mapPinsContainer.appendChild(fragment);
