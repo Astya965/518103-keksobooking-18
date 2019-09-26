@@ -17,6 +17,8 @@ var MAX_Y = 630;
 var ADJUSTMENT_X = 25;
 var ADJUSTMENT_Y = 70;
 var OFFERS_LIST_LENGTH = 8;
+var DICTIONARY_ROOMS = ['комната', 'комнаты', 'комнат'];
+var DICTIONARY_GUESTS = ['гостя', 'гостей', 'гостей'];
 var mapElement = document.querySelector('.map');
 var mapFilters = document.querySelector('.map__filters-container');
 var offersTimplate = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -63,6 +65,27 @@ var mixArray = function (array) {
   }
 
   return array;
+};
+
+/**
+ * Согласование существительных с числительными
+ * @param {Number} number - числительное в виде числа
+ * @param {Array} dictionaryArray - массив с возможными вариантами существительных
+ * @return {string} Подходящее существительное (элемент массива)
+ */
+var connectNounAndNumral = function (number, dictionaryArray) {
+  number = Math.abs(number) % 100;
+  var number1 = number % 10;
+  if (number > 10 && number < 20) {
+    return dictionaryArray[2];
+  }
+  if (number1 > 1 && number1 < 5) {
+    return dictionaryArray[1];
+  }
+  if (number1 === 1) {
+    return dictionaryArray[0];
+  }
+  return dictionaryArray[2];
 };
 
 /**
@@ -151,7 +174,8 @@ var showModalOffer = function (itemData) {
   popupOfferAddress.textContent = itemData.offer.address;
   popupOfferPrice.textContent = itemData.offer.price + '₽/ночь';
   popupOfferType.textContent = ACCOMMODATION_TYPES_MAP[itemData.offer.type];
-  popupOfferCapacity.textContent = itemData.offer.rooms + ' комнаты для ' + itemData.offer.guests + ' гостей';
+  popupOfferCapacity.textContent = itemData.offer.rooms + ' ' + connectNounAndNumral(itemData.offer.rooms, DICTIONARY_ROOMS) +
+   ' для ' + itemData.offer.guests + ' ' + connectNounAndNumral(itemData.offer.guests, DICTIONARY_GUESTS);
   popupOfferTime.textContent = 'Заезд после ' + itemData.offer.checkin + ', выезд до ' + itemData.offer.checkout;
   popupOfferFeatures.innerHTML = '';
   for (var i = 0; i < itemData.offer.features.length; i++) {
