@@ -135,7 +135,7 @@ var generateOfferData = function (index) {
 
     'offer': {
       'title': 'Предложение ' + getRandomNumber(1, 99),
-      'address': (locationX - ADJUSTMENT_X) + ', ' + (locationY - ADJUSTMENT_Y),
+      'address': locationX + ', ' + locationY,
       'price': getRandomNumber(1000, 100000),
       'type': getRandomElement(ACCOMMODATION_TYPES),
       'rooms': getRandomNumber(1, 8),
@@ -148,8 +148,8 @@ var generateOfferData = function (index) {
     },
 
     'location': {
-      'x': locationX,
-      'y': locationY
+      'x': locationX - ADJUSTMENT_X,
+      'y': locationY - ADJUSTMENT_Y
     }
   };
 };
