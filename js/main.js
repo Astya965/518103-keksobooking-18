@@ -17,12 +17,31 @@ var MAX_Y = 630;
 var ADJUSTMENT_X = 25;
 var ADJUSTMENT_Y = 70;
 var OFFERS_LIST_LENGTH = 8;
-var DICTIONARY_ROOMS = ['комната', 'комнаты', 'комнат'];
-var DICTIONARY_GUESTS = ['гостя', 'гостей', 'гостей'];
+var DICTIONARY_ROOMS = {
+  'one': 'комната',
+  'few': 'комнаты',
+  'other': 'комнат'};
+var DICTIONARY_GUESTS = {
+  'one': 'гостя',
+  'few': 'гостей',
+  'other': 'гостей'};
+var offerDataArray = [];
 var mapElement = document.querySelector('.map');
 var mapFilters = document.querySelector('.map__filters-container');
 var offersTimplate = document.querySelector('#pin').content.querySelector('.map__pin');
 var offersPopupTimplate = document.querySelector('#card').content;
+var popupOfferElement = offersPopupTimplate.cloneNode(true);
+var popupOfferTitle = popupOfferElement.querySelector('.popup__title');
+var popupOfferAddress = popupOfferElement.querySelector('.popup__text--address');
+var popupOfferPrice = popupOfferElement.querySelector('.popup__text--price');
+var popupOfferType = popupOfferElement.querySelector('.popup__type');
+var popupOfferCapacity = popupOfferElement.querySelector('.popup__text--capacity');
+var popupOfferTime = popupOfferElement.querySelector('.popup__text--time');
+var popupOfferFeatures = popupOfferElement.querySelector('.popup__features');
+var popupOfferDescription = popupOfferElement.querySelector('.popup__description');
+var popupOfferPhotos = popupOfferElement.querySelector('.popup__photos');
+var popupOfferPhotosElement = popupOfferPhotos.querySelector('.popup__photo');
+var popupOfferAvatar = popupOfferElement.querySelector('.popup__avatar');
 
 /**
  * @description Показывает карту
@@ -70,22 +89,22 @@ var mixArray = function (array) {
 /**
  * Согласование существительных с числительными
  * @param {Number} number - числительное в виде числа
- * @param {Array} dictionaryArray - массив с возможными вариантами существительных
+ * @param {object} dictionary - словарь с возможными вариантами существительных
  * @return {string} Подходящее существительное (элемент массива)
  */
-var connectNounAndNumral = function (number, dictionaryArray) {
-  number = Math.abs(number) % 100;
-  var number1 = number % 10;
-  if (number > 10 && number < 20) {
-    return dictionaryArray[2];
+var connectNounAndNumral = function (number, dictionary) {
+  var tens = Math.abs(number) % 100;
+  var units = number % 10;
+  if (tens > 10 && tens < 20) {
+    return dictionary.other;
   }
-  if (number1 > 1 && number1 < 5) {
-    return dictionaryArray[1];
+  if (units > 1 && units < 5) {
+    return dictionary.few;
   }
-  if (number1 === 1) {
-    return dictionaryArray[0];
+  if (units === 1) {
+    return dictionary.one;
   }
-  return dictionaryArray[2];
+  return dictionary.other;
 };
 
 /**
@@ -116,7 +135,7 @@ var generateOfferData = function (index) {
 
     'offer': {
       'title': 'Предложение ' + getRandomNumber(1, 99),
-      'address': locationX + ', ' + locationY,
+      'address': (locationX - ADJUSTMENT_X) + ', ' + (locationY - ADJUSTMENT_Y),
       'price': getRandomNumber(1000, 100000),
       'type': getRandomElement(ACCOMMODATION_TYPES),
       'rooms': getRandomNumber(1, 8),
@@ -136,6 +155,19 @@ var generateOfferData = function (index) {
 };
 
 /**
+ * Генерация массива данных
+ * @return {Array} Массив сгенерированнных данных
+ */
+var generateOfferDataArray = function () {
+  for (var i = 0; i < OFFERS_LIST_LENGTH; i++) {
+    var offerDataElemenet = generateOfferData(i);
+    offerDataArray.push(offerDataElemenet);
+  }
+
+  return offerDataArray;
+};
+
+/**
  * Генерация пина объявления
  * @param {Object} itemData - Данные объявления, которые передаются в пин
  * @return {HTMLElemet} Шаблон для генерации пина объявления
@@ -144,8 +176,8 @@ var renderOffer = function (itemData) {
   var pinElement = offersTimplate.cloneNode(true);
   var pinElementImg = pinElement.querySelector('img');
 
-  pinElement.style.left = itemData.location.x - ADJUSTMENT_X + 'px';
-  pinElement.style.top = itemData.location.y - ADJUSTMENT_Y + 'px';
+  pinElement.style.left = itemData.location.x + 'px';
+  pinElement.style.top = itemData.location.y + 'px';
   pinElementImg.src = itemData.author.avatar;
   pinElementImg.alt = itemData.offer.description;
 
@@ -153,30 +185,10 @@ var renderOffer = function (itemData) {
 };
 
 /**
- * Генерация модального окна с информацией об объявлении
+ * @description Отображение доступных удобств в объявлении для попапа
  * @param {Object} itemData - Данные объявления, которые передаются в объявление
  */
-var showModalOffer = function (itemData) {
-  var popupOfferElement = offersPopupTimplate.cloneNode(true);
-  var popupOfferTitle = popupOfferElement.querySelector('.popup__title');
-  var popupOfferAddress = popupOfferElement.querySelector('.popup__text--address');
-  var popupOfferPrice = popupOfferElement.querySelector('.popup__text--price');
-  var popupOfferType = popupOfferElement.querySelector('.popup__type');
-  var popupOfferCapacity = popupOfferElement.querySelector('.popup__text--capacity');
-  var popupOfferTime = popupOfferElement.querySelector('.popup__text--time');
-  var popupOfferFeatures = popupOfferElement.querySelector('.popup__features');
-  var popupOfferDescription = popupOfferElement.querySelector('.popup__description');
-  var popupOfferPhotos = popupOfferElement.querySelector('.popup__photos');
-  var popupOfferPhotosElement = popupOfferPhotos.querySelector('.popup__photo');
-  var popupOfferAvatar = popupOfferElement.querySelector('.popup__avatar');
-
-  popupOfferTitle.textContent = itemData.offer.title;
-  popupOfferAddress.textContent = itemData.offer.address;
-  popupOfferPrice.textContent = itemData.offer.price + '₽/ночь';
-  popupOfferType.textContent = ACCOMMODATION_TYPES_MAP[itemData.offer.type];
-  popupOfferCapacity.textContent = itemData.offer.rooms + ' ' + connectNounAndNumral(itemData.offer.rooms, DICTIONARY_ROOMS) +
-   ' для ' + itemData.offer.guests + ' ' + connectNounAndNumral(itemData.offer.guests, DICTIONARY_GUESTS);
-  popupOfferTime.textContent = 'Заезд после ' + itemData.offer.checkin + ', выезд до ' + itemData.offer.checkout;
+var renderFeaturesInPopup = function (itemData) {
   popupOfferFeatures.innerHTML = '';
   for (var i = 0; i < itemData.offer.features.length; i++) {
     var createElement = document.createElement('li');
@@ -184,7 +196,13 @@ var showModalOffer = function (itemData) {
     createElement.classList.add('popup__feature--' + itemData.offer.features[i]);
     popupOfferFeatures.appendChild(createElement);
   }
-  popupOfferDescription.textContent = itemData.offer.description;
+};
+
+/**
+ * @description Отображение доступных удобств в объявлении для попапа
+ * @param {Object} itemData - Данные объявления, которые передаются в объявление
+ */
+var renderPhotosInPopup = function (itemData) {
   for (var j = 0; j < itemData.offer.photos.length; j++) {
     if (j === 0) {
       popupOfferPhotosElement.src = itemData.offer.photos[j];
@@ -194,8 +212,26 @@ var showModalOffer = function (itemData) {
       popupOfferPhotos.appendChild(clonedPhotosElement);
     }
   }
+};
+
+/**
+ * Генерация модального окна с информацией об объявлении
+ * @param {Object} itemData - Данные объявления, которые передаются в объявление
+ */
+var showModalOffer = function (itemData) {
+  popupOfferTitle.textContent = itemData.offer.title;
+  popupOfferAddress.textContent = itemData.offer.address;
+  popupOfferPrice.textContent = itemData.offer.price + '₽/ночь';
+  popupOfferType.textContent = ACCOMMODATION_TYPES_MAP[itemData.offer.type];
+  popupOfferCapacity.textContent = itemData.offer.rooms + ' ' + connectNounAndNumral(itemData.offer.rooms, DICTIONARY_ROOMS) +
+   ' для ' + itemData.offer.guests + ' ' + connectNounAndNumral(itemData.offer.guests, DICTIONARY_GUESTS);
+  popupOfferTime.textContent = 'Заезд после ' + itemData.offer.checkin + ', выезд до ' + itemData.offer.checkout;
+  renderFeaturesInPopup(itemData);
+  popupOfferDescription.textContent = itemData.offer.description;
+  renderPhotosInPopup(itemData);
   popupOfferAvatar.src = itemData.author.avatar;
 
+  mapElement.appendChild(popupOfferElement);
   mapElement.insertBefore(popupOfferElement, mapFilters);
 };
 
@@ -206,17 +242,15 @@ var showOffersPins = function () {
   var mapPinsContainer = document.querySelector('.map__pins');
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < OFFERS_LIST_LENGTH; i++) {
-    var offerData = generateOfferData(i);
+  for (var i = 0; i < offerDataArray.length; i++) {
+    var offerData = offerDataArray[i];
     fragment.appendChild(renderOffer(offerData));
-
-    if (i === 0) {
-      showModalOffer(generateOfferData(i));
-    }
   }
 
   mapPinsContainer.appendChild(fragment);
 };
 
 showDialog();
+generateOfferDataArray();
 showOffersPins();
+showModalOffer(offerDataArray[0]);
