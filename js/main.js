@@ -1,6 +1,12 @@
 'use strict';
 
 var ACCOMMODATION_TYPES = ['palace', 'flat', 'house', 'bungalo'];
+var ACCOMMODATION_TYPES_MAP = {
+  'flat': 'Квартира',
+  'bungalo': 'Бунгало',
+  'house': 'Дом',
+  'palace': 'Дворец'
+};
 var CHECKIN_CHECKOUT_TIME = ['12:00', '13:00', '14:00'];
 var FEATURES_POOL = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var PHOTO_COUNT = 3;
@@ -11,8 +17,31 @@ var MAX_Y = 630;
 var ADJUSTMENT_X = 25;
 var ADJUSTMENT_Y = 70;
 var OFFERS_LIST_LENGTH = 8;
+var DICTIONARY_ROOMS = {
+  'one': 'комната',
+  'few': 'комнаты',
+  'other': 'комнат'};
+var DICTIONARY_GUESTS = {
+  'one': 'гостя',
+  'few': 'гостей',
+  'other': 'гостей'};
+var offerDataArray = [];
 var mapElement = document.querySelector('.map');
+var mapFilters = document.querySelector('.map__filters-container');
 var offersTimplate = document.querySelector('#pin').content.querySelector('.map__pin');
+var offersPopupTimplate = document.querySelector('#card').content;
+var popupOfferElement = offersPopupTimplate.cloneNode(true);
+var popupOfferTitle = popupOfferElement.querySelector('.popup__title');
+var popupOfferAddress = popupOfferElement.querySelector('.popup__text--address');
+var popupOfferPrice = popupOfferElement.querySelector('.popup__text--price');
+var popupOfferType = popupOfferElement.querySelector('.popup__type');
+var popupOfferCapacity = popupOfferElement.querySelector('.popup__text--capacity');
+var popupOfferTime = popupOfferElement.querySelector('.popup__text--time');
+var popupOfferFeatures = popupOfferElement.querySelector('.popup__features');
+var popupOfferDescription = popupOfferElement.querySelector('.popup__description');
+var popupOfferPhotos = popupOfferElement.querySelector('.popup__photos');
+var popupOfferPhotosElement = popupOfferPhotos.querySelector('.popup__photo');
+var popupOfferAvatar = popupOfferElement.querySelector('.popup__avatar');
 
 /**
  * @description Показывает карту
@@ -48,13 +77,34 @@ var getRandomElement = function (array) {
  */
 var mixArray = function (array) {
   for (var i = array.length - 1; i > 0; i--) {
-    var k = Math.floor(Math.random() * (i + 1));
-    var swap = array[k];
-    array[k] = array[i];
+    var j = Math.floor(Math.random() * (i + 1));
+    var swap = array[j];
+    array[j] = array[i];
     array[i] = swap;
   }
 
   return array;
+};
+
+/**
+ * Согласование существительных с числительными
+ * @param {Number} number - числительное в виде числа
+ * @param {object} dictionary - словарь с возможными вариантами существительных
+ * @return {string} Подходящее существительное (элемент массива)
+ */
+var connectNounAndNumral = function (number, dictionary) {
+  var tens = Math.abs(number) % 100;
+  var units = number % 10;
+  if (tens > 10 && tens < 20) {
+    return dictionary.other;
+  }
+  if (units > 1 && units < 5) {
+    return dictionary.few;
+  }
+  if (units === 1) {
+    return dictionary.one;
+  }
+  return dictionary.other;
 };
 
 /**
@@ -98,10 +148,23 @@ var generateOfferData = function (index) {
     },
 
     'location': {
-      'x': locationX,
-      'y': locationY
+      'x': locationX - ADJUSTMENT_X,
+      'y': locationY - ADJUSTMENT_Y
     }
   };
+};
+
+/**
+ * Генерация массива данных
+ * @return {Array} Массив сгенерированнных данных
+ */
+var generateOfferDataArray = function () {
+  for (var i = 0; i < OFFERS_LIST_LENGTH; i++) {
+    var offerDataElemenet = generateOfferData(i);
+    offerDataArray.push(offerDataElemenet);
+  }
+
+  return offerDataArray;
 };
 
 /**
@@ -113,12 +176,63 @@ var renderOffer = function (itemData) {
   var pinElement = offersTimplate.cloneNode(true);
   var pinElementImg = pinElement.querySelector('img');
 
-  pinElement.style.left = itemData.location.x - ADJUSTMENT_X + 'px';
-  pinElement.style.top = itemData.location.y - ADJUSTMENT_Y + 'px';
+  pinElement.style.left = itemData.location.x + 'px';
+  pinElement.style.top = itemData.location.y + 'px';
   pinElementImg.src = itemData.author.avatar;
   pinElementImg.alt = itemData.offer.description;
 
   return pinElement;
+};
+
+/**
+ * @description Отображение доступных удобств в объявлении для попапа
+ * @param {Object} itemData - Данные объявления, которые передаются в объявление
+ */
+var renderFeaturesInPopup = function (itemData) {
+  popupOfferFeatures.innerHTML = '';
+  for (var i = 0; i < itemData.offer.features.length; i++) {
+    var createElement = document.createElement('li');
+    createElement.classList.add('popup__feature');
+    createElement.classList.add('popup__feature--' + itemData.offer.features[i]);
+    popupOfferFeatures.appendChild(createElement);
+  }
+};
+
+/**
+ * @description Отображение фотографий в объявлении для попапа
+ * @param {Object} itemData - Данные объявления, которые передаются в объявление
+ */
+var renderPhotosInPopup = function (itemData) {
+  for (var j = 0; j < itemData.offer.photos.length; j++) {
+    if (j === 0) {
+      popupOfferPhotosElement.src = itemData.offer.photos[j];
+    } else {
+      var clonedPhotosElement = popupOfferPhotosElement.cloneNode(true);
+      clonedPhotosElement.src = itemData.offer.photos[j];
+      popupOfferPhotos.appendChild(clonedPhotosElement);
+    }
+  }
+};
+
+/**
+ * Генерация модального окна с информацией об объявлении
+ * @param {Object} itemData - Данные объявления, которые передаются в объявление
+ */
+var showModalOffer = function (itemData) {
+  popupOfferTitle.textContent = itemData.offer.title;
+  popupOfferAddress.textContent = itemData.offer.address;
+  popupOfferPrice.textContent = itemData.offer.price + '₽/ночь';
+  popupOfferType.textContent = ACCOMMODATION_TYPES_MAP[itemData.offer.type];
+  popupOfferCapacity.textContent = itemData.offer.rooms + ' ' + connectNounAndNumral(itemData.offer.rooms, DICTIONARY_ROOMS) +
+   ' для ' + itemData.offer.guests + ' ' + connectNounAndNumral(itemData.offer.guests, DICTIONARY_GUESTS);
+  popupOfferTime.textContent = 'Заезд после ' + itemData.offer.checkin + ', выезд до ' + itemData.offer.checkout;
+  renderFeaturesInPopup(itemData);
+  popupOfferDescription.textContent = itemData.offer.description;
+  renderPhotosInPopup(itemData);
+  popupOfferAvatar.src = itemData.author.avatar;
+
+  mapElement.appendChild(popupOfferElement);
+  mapElement.insertBefore(popupOfferElement, mapFilters);
 };
 
 /**
@@ -128,8 +242,8 @@ var showOffersPins = function () {
   var mapPinsContainer = document.querySelector('.map__pins');
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < OFFERS_LIST_LENGTH; i++) {
-    var offerData = generateOfferData(i);
+  for (var i = 0; i < offerDataArray.length; i++) {
+    var offerData = offerDataArray[i];
     fragment.appendChild(renderOffer(offerData));
   }
 
@@ -137,4 +251,6 @@ var showOffersPins = function () {
 };
 
 showDialog();
+generateOfferDataArray();
 showOffersPins();
+showModalOffer(offerDataArray[0]);
