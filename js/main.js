@@ -199,7 +199,7 @@ var renderFeaturesInPopup = function (itemData) {
 };
 
 /**
- * @description Отображение доступных удобств в объявлении для попапа
+ * @description Отображение фотографий в объявлении для попапа
  * @param {Object} itemData - Данные объявления, которые передаются в объявление
  */
 var renderPhotosInPopup = function (itemData) {
