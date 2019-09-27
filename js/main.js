@@ -52,6 +52,7 @@ var adFormFieldsets = adForm.querySelectorAll('fieldset');
 var adFormAdressInput = adForm.querySelector('#address');
 var adFormRoomsInput = adForm.querySelector('#room_number');
 var adFormCapacityInput = adForm.querySelector('#capacity');
+var adFormCapacityOptions = adFormCapacityInput.querySelectorAll('option');
 var pinButton = mapElement.querySelector('.map__pin--main');
 
 /**
@@ -179,9 +180,9 @@ var generateOfferDataArray = function () {
 };
 
 /**
- * Генерация пина похожого объявления
+ * Генерация пина похожeго объявления
  * @param {Object} itemData - Данные объявления, которые передаются в пин
- * @return {HTMLElemet} Шаблон для генерации пина похожого объявления
+ * @return {HTMLElemet} Шаблон для генерации пина похожeго объявления
  */
 var renderOffer = function (itemData) {
   var pinElement = offersTimplate.cloneNode(true);
@@ -255,7 +256,7 @@ var setPinCoordinates = function (isStartingPosition) {
   var pinX = Math.round(pageXOffset + coordinatesArray.left);
   var pinY = Math.round(pageYOffset + coordinatesArray.top);
   var pinCoordinates = (pinX + ADJUSTMENT_X) + ', ' + (pinY + ADJUSTMENT_Y);
-  if (isStartingPosition === true) {
+  if (isStartingPosition) {
     pinCoordinates = (pinX + ADJUSTMENT_X) + ', ' + (pinY + ADJUSTMENT_X);
   }
   adFormAdressInput.value = pinCoordinates;
@@ -278,8 +279,6 @@ var showOffersPins = function () {
 
 /**
  * Проверка соответствия количества мест количеству комнату
- * @param {HTMLElemet} input - HTMLElement, который проходит проверку на валидность
- * (поле выбора количества комнат или количества мест)
  */
 var checkRoomsAndCapacityValidity = function () {
   if (adFormRoomsInput.value === '100' && adFormCapacityInput.value !== '0') {
@@ -300,49 +299,20 @@ var checkRoomsAndCapacityValidity = function () {
  * (при выборе количества комнат в форме создания объявления)
  */
 var setOptionsForRooms = function () {
-  if (adFormRoomsInput.value === '100') {
-    activateCollectionElements(adFormCapacityInput.querySelectorAll('option'));
-    disableOptions(adFormCapacityInput.querySelectorAll('option'), [0, 1, 2]);
-  } else if (adFormRoomsInput.value === '1') {
-    activateCollectionElements(adFormCapacityInput.querySelectorAll('option'));
-    disableOptions(adFormCapacityInput.querySelectorAll('option'), [0, 1, 3]);
-  } else if (adFormRoomsInput.value === '2') {
-    activateCollectionElements(adFormCapacityInput.querySelectorAll('option'));
-    disableOptions(adFormCapacityInput.querySelectorAll('option'), [0, 3]);
-  } else if (adFormRoomsInput.value === '3') {
-    activateCollectionElements(adFormCapacityInput.querySelectorAll('option'));
-    disableOptions(adFormCapacityInput.querySelectorAll('option'), [3]);
-  }
+  Array.prototype.forEach.call(adFormCapacityOptions, function (option) {
+    option.disable = option.value > adFormRoomsInput.value || adFormRoomsInput.value === '100' && option.value !== 0;
+  });
 };
 
 /**
- * @description Добавляет атрибут disabled части элементов коллекции
- * @param {Collection} collection - Коллекция элементов
- * @param {Array} indexsArray - Массив с индексами элементов коллекции
+ * Добавляет или убирает атрибут disabled всем элементам коллекции
+ * @param {Array} collection - Коллекция элементов
+ * @param {Boolean} needDeactivate - Автивируется или деактивируется элемент
+ * (True - для деактивации и False - для активации)
  */
-var disableOptions = function (collection, indexsArray) {
-  for (var i = 0; i < indexsArray.length; i++) {
-    collection[indexsArray[i]].setAttribute('disabled', 'disabled');
-  }
-};
-
-/**
- * Добавляет атрибут disabled всем элементам коллекции
- * @param {Collection} collection - Коллекция элементов
- */
-var deactivateCollectionElements = function (collection) {
+var toggleEnableElements = function (collection, needDeactivate) {
   for (var i = 0; i < collection.length; i++) {
-    collection[i].setAttribute('disabled', 'disabled');
-  }
-};
-
-/**
- * Убирает атрибут disabled у всех элементов коллекции
- * @param {Collection} collection - Коллекция элементов
- */
-var activateCollectionElements = function (collection) {
-  for (var i = 0; i < collection.length; i++) {
-    collection[i].removeAttribute('disabled', 'disabled');
+    collection[i].disabled = needDeactivate;
   }
 };
 
@@ -350,10 +320,10 @@ var activateCollectionElements = function (collection) {
  * @description Неактивное состояние страницы, формы заблокированы
  */
 var deactivatePage = function () {
-  deactivateCollectionElements(mapFiltersFormSelects);
-  deactivateCollectionElements(mapFiltersFormFieldsets);
-  deactivateCollectionElements(adFormFieldsets);
-  deactivateCollectionElements(adFormSelects);
+  toggleEnableElements(mapFiltersFormSelects, true);
+  toggleEnableElements(mapFiltersFormFieldsets, true);
+  toggleEnableElements(adFormFieldsets, true);
+  toggleEnableElements(adFormSelects, true);
 };
 
 /**
@@ -361,10 +331,11 @@ var deactivatePage = function () {
  * на карте отражаются похожие объявления
  */
 var activatePage = function () {
-  activateCollectionElements(mapFiltersFormSelects);
-  activateCollectionElements(mapFiltersFormFieldsets);
-  activateCollectionElements(adFormFieldsets);
-  activateCollectionElements(adFormSelects);
+  adForm.classList.remove('ad-form--disabled');
+  toggleEnableElements(mapFiltersFormSelects, false);
+  toggleEnableElements(mapFiltersFormFieldsets, false);
+  toggleEnableElements(adFormFieldsets, false);
+  toggleEnableElements(adFormSelects, false);
 
   setPinCoordinates(false);
   showDialog();
