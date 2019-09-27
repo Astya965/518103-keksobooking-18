@@ -301,16 +301,16 @@ var checkRoomsAndCapacityValidity = function () {
  */
 var setOptionsForRooms = function () {
   if (adFormRoomsInput.value === '100') {
-    activateOptions(adFormCapacityInput.querySelectorAll('option'), [3]);
+    activateCollectionElements(adFormCapacityInput.querySelectorAll('option'));
     disableOptions(adFormCapacityInput.querySelectorAll('option'), [0, 1, 2]);
   } else if (adFormRoomsInput.value === '1') {
-    activateOptions(adFormCapacityInput.querySelectorAll('option'), [2]);
+    activateCollectionElements(adFormCapacityInput.querySelectorAll('option'));
     disableOptions(adFormCapacityInput.querySelectorAll('option'), [0, 1, 3]);
   } else if (adFormRoomsInput.value === '2') {
-    activateOptions(adFormCapacityInput.querySelectorAll('option'), [1, 2]);
+    activateCollectionElements(adFormCapacityInput.querySelectorAll('option'));
     disableOptions(adFormCapacityInput.querySelectorAll('option'), [0, 3]);
   } else if (adFormRoomsInput.value === '3') {
-    activateOptions(adFormCapacityInput.querySelectorAll('option'), [0, 1, 2]);
+    activateCollectionElements(adFormCapacityInput.querySelectorAll('option'));
     disableOptions(adFormCapacityInput.querySelectorAll('option'), [3]);
   }
 };
@@ -321,16 +321,16 @@ var setOptionsForRooms = function () {
  */
 var setOptionsForCapacity = function () {
   if (adFormCapacityInput.value === '0') {
-    activateOptions(adFormRoomsInput.querySelectorAll('option'), [3]);
+    activateCollectionElements(adFormRoomsInput.querySelectorAll('option'));
     disableOptions(adFormRoomsInput.querySelectorAll('option'), [0, 1, 2]);
   } else if (adFormCapacityInput.value === '1') {
-    activateOptions(adFormRoomsInput.querySelectorAll('option'), [0, 1, 2]);
+    activateCollectionElements(adFormRoomsInput.querySelectorAll('option'));
     disableOptions(adFormRoomsInput.querySelectorAll('option'), [3]);
   } else if (adFormCapacityInput.value === '2') {
-    activateOptions(adFormRoomsInput.querySelectorAll('option'), [1, 2]);
+    activateCollectionElements(adFormRoomsInput.querySelectorAll('option'));
     disableOptions(adFormRoomsInput.querySelectorAll('option'), [0, 3]);
   } else if (adFormCapacityInput.value === '3') {
-    activateOptions(adFormRoomsInput.querySelectorAll('option'), [2]);
+    activateCollectionElements(adFormRoomsInput.querySelectorAll('option'));
     disableOptions(adFormRoomsInput.querySelectorAll('option'), [0, 1, 3]);
   }
 };
@@ -343,17 +343,6 @@ var setOptionsForCapacity = function () {
 var disableOptions = function (collection, indexsArray) {
   for (var i = 0; i < indexsArray.length; i++) {
     collection[indexsArray[i]].setAttribute('disabled', 'disabled');
-  }
-};
-
-/**
- * @description Убирает атрибут disabled у части элементов коллекции
- * @param {Collection} collection - Коллекция элементов
- * @param {Array} indexsArray - Массив с индексами элементов коллекции
- */
-var activateOptions = function (collection, indexsArray) {
-  for (var i = 0; i < indexsArray.length; i++) {
-    collection[indexsArray[i]].removeAttribute('disabled');
   }
 };
 
