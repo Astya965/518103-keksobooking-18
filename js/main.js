@@ -337,6 +337,8 @@ var activatePage = function () {
   toggleEnableElements(mapFiltersFormFieldsets, false);
   toggleEnableElements(adFormFieldsets, false);
   toggleEnableElements(adFormSelects, false);
+  toggleEnableElements(adFormAdressInput, true);
+  adFormAdressInput.classList.add('ad-form--disabled');
 
   setPinCoordinates(false);
   showDialog();
