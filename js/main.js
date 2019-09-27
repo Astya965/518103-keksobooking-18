@@ -316,26 +316,6 @@ var setOptionsForRooms = function () {
 };
 
 /**
- * @description Отключение неподходящих вариантов для данного количества гостей
- * (при выборе количества мест в форме создания объявления)
- */
-var setOptionsForCapacity = function () {
-  if (adFormCapacityInput.value === '0') {
-    activateCollectionElements(adFormRoomsInput.querySelectorAll('option'));
-    disableOptions(adFormRoomsInput.querySelectorAll('option'), [0, 1, 2]);
-  } else if (adFormCapacityInput.value === '1') {
-    activateCollectionElements(adFormRoomsInput.querySelectorAll('option'));
-    disableOptions(adFormRoomsInput.querySelectorAll('option'), [3]);
-  } else if (adFormCapacityInput.value === '2') {
-    activateCollectionElements(adFormRoomsInput.querySelectorAll('option'));
-    disableOptions(adFormRoomsInput.querySelectorAll('option'), [0, 3]);
-  } else if (adFormCapacityInput.value === '3') {
-    activateCollectionElements(adFormRoomsInput.querySelectorAll('option'));
-    disableOptions(adFormRoomsInput.querySelectorAll('option'), [0, 1, 3]);
-  }
-};
-
-/**
  * @description Добавляет атрибут disabled части элементов коллекции
  * @param {Collection} collection - Коллекция элементов
  * @param {Array} indexsArray - Массив с индексами элементов коллекции
@@ -428,11 +408,10 @@ adFormRoomsInput.addEventListener('input', function () {
 
 /**
  * @description При выборе выборе количества мест в форме создания объявления включается
- * проверка соответствия количества мест количеству комнату и отключаются лишние опции при выборе количества комнат
+ * проверка соответствия количества мест количеству комнату
  */
 adFormCapacityInput.addEventListener('input', function () {
   checkRoomsAndCapacityValidity();
-  setOptionsForCapacity();
 });
 
 generateOfferDataArray();
