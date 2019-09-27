@@ -299,8 +299,9 @@ var checkRoomsAndCapacityValidity = function () {
  * (при выборе количества комнат в форме создания объявления)
  */
 var setOptionsForRooms = function () {
-  Array.prototype.forEach.call(adFormCapacityOptions, function (option) {
-    option.disable = option.value > adFormRoomsInput.value || adFormRoomsInput.value === '100' && option.value !== 0;
+  Array.from(adFormCapacityOptions).forEach(function (option) {
+    option.disabled = option.value > adFormRoomsInput.value || adFormRoomsInput.value !== '100' && option.value === '0'
+     || adFormRoomsInput.value === '100' && option.value !== '0';
   });
 };
 
