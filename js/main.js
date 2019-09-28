@@ -1,5 +1,6 @@
 'use strict';
 
+var ENTER_KEYCODE = 13;
 var ACCOMMODATION_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var ACCOMMODATION_TYPES_MAP = {
   'flat': 'Квартира',
@@ -42,6 +43,17 @@ var popupOfferDescription = popupOfferElement.querySelector('.popup__description
 var popupOfferPhotos = popupOfferElement.querySelector('.popup__photos');
 var popupOfferPhotosElement = popupOfferPhotos.querySelector('.popup__photo');
 var popupOfferAvatar = popupOfferElement.querySelector('.popup__avatar');
+var mapFiltersForm = document.querySelector('.map__filters');
+var mapFiltersFormSelects = mapFiltersForm.querySelectorAll('select');
+var mapFiltersFormFieldsets = mapFiltersForm.querySelectorAll('fieldset');
+var adForm = document.querySelector('.ad-form');
+var adFormSelects = adForm.querySelectorAll('select');
+var adFormFieldsets = adForm.querySelectorAll('fieldset');
+var adFormAdressInput = adForm.querySelector('#address');
+var adFormRoomsInput = adForm.querySelector('#room_number');
+var adFormCapacityInput = adForm.querySelector('#capacity');
+var adFormCapacityOptions = adFormCapacityInput.querySelectorAll('option');
+var pinButton = mapElement.querySelector('.map__pin--main');
 
 /**
  * @description Показывает карту
@@ -89,8 +101,8 @@ var mixArray = function (array) {
 /**
  * Согласование существительных с числительными
  * @param {Number} number - числительное в виде числа
- * @param {object} dictionary - словарь с возможными вариантами существительных
- * @return {string} Подходящее существительное (элемент массива)
+ * @param {Object} dictionary - словарь с возможными вариантами существительных
+ * @return {String} Подходящее существительное
  */
 var connectNounAndNumral = function (number, dictionary) {
   var tens = Math.abs(number) % 100;
@@ -135,7 +147,7 @@ var generateOfferData = function (index) {
 
     'offer': {
       'title': 'Предложение ' + getRandomNumber(1, 99),
-      'address': locationX + ', ' + locationY,
+      'address': (locationX + ADJUSTMENT_X) + ', ' + (locationY + ADJUSTMENT_Y),
       'price': getRandomNumber(1000, 100000),
       'type': getRandomElement(ACCOMMODATION_TYPES),
       'rooms': getRandomNumber(1, 8),
@@ -148,8 +160,8 @@ var generateOfferData = function (index) {
     },
 
     'location': {
-      'x': locationX - ADJUSTMENT_X,
-      'y': locationY - ADJUSTMENT_Y
+      'x': locationX,
+      'y': locationY
     }
   };
 };
@@ -168,9 +180,9 @@ var generateOfferDataArray = function () {
 };
 
 /**
- * Генерация пина объявления
+ * Генерация пина похожeго объявления
  * @param {Object} itemData - Данные объявления, которые передаются в пин
- * @return {HTMLElemet} Шаблон для генерации пина объявления
+ * @return {HTMLElemet} Шаблон для генерации пина похожeго объявления
  */
 var renderOffer = function (itemData) {
   var pinElement = offersTimplate.cloneNode(true);
@@ -236,6 +248,21 @@ var showModalOffer = function (itemData) {
 };
 
 /**
+ * Передача координат острого конца метки в поле адреса (форма создания объявления)
+ * @param {Boolean} isStartingPosition - Находится ли объект на стратовой позиции (true/false)
+ */
+var setPinCoordinates = function () {
+  var pinX = pinButton.style.left.slice(0, -2);
+  var pinY = pinButton.style.top.slice(0, -2);
+  pinX = Math.round(+pinX + ADJUSTMENT_X);
+  pinY = Math.round(+pinY + ADJUSTMENT_Y);
+
+  var pinCoordinates = pinX + ', ' + pinY;
+
+  adFormAdressInput.value = pinCoordinates;
+};
+
+/**
  * @description Показывает пин объявления на карте
  */
 var showOffersPins = function () {
@@ -250,7 +277,115 @@ var showOffersPins = function () {
   mapPinsContainer.appendChild(fragment);
 };
 
-showDialog();
+/**
+ * Проверка соответствия количества мест количеству комнату
+ */
+var checkRoomsAndCapacityValidity = function () {
+  if (adFormRoomsInput.value === '100' && adFormCapacityInput.value !== '0') {
+    adFormRoomsInput.setCustomValidity('Только не для гостей');
+  } else if (adFormCapacityInput.value === '0' && adFormRoomsInput.value !== '100') {
+    adFormCapacityInput.setCustomValidity('Для выбора данной опции необходимо 100 комнат');
+  } else if (adFormRoomsInput.value < adFormCapacityInput.value && adFormCapacityInput.value !== 0) {
+    adFormRoomsInput.setCustomValidity('Количество людей больше, чем мест. Выберете большее количество комнат');
+    adFormCapacityInput.setCustomValidity('Количество людей больше, чем мест. Выберете большее количество комнат');
+  } else {
+    adFormRoomsInput.setCustomValidity('');
+    adFormCapacityInput.setCustomValidity('');
+  }
+};
+
+/**
+ * @description Отключение неподходящих вариантов для данного количества комнат
+ * (при выборе количества комнат в форме создания объявления)
+ */
+var setOptionsForRooms = function () {
+  [].forEach.call(adFormCapacityOptions, function (option) {
+    option.disabled = option.value > adFormRoomsInput.value || adFormRoomsInput.value !== '100' && option.value === '0'
+     || adFormRoomsInput.value === '100' && option.value !== '0';
+  });
+};
+
+/**
+ * Добавляет или убирает атрибут disabled всем элементам коллекции
+ * @param {Array} collection - Коллекция элементов
+ * @param {Boolean} needDeactivate - Автивируется или деактивируется элемент
+ * (True - для деактивации и False - для активации)
+ */
+var toggleEnableElements = function (collection, needDeactivate) {
+  for (var i = 0; i < collection.length; i++) {
+    collection[i].disabled = needDeactivate;
+  }
+};
+
+/**
+ * @description Неактивное состояние страницы, формы заблокированы
+ */
+var deactivatePage = function () {
+  toggleEnableElements(mapFiltersFormSelects, true);
+  toggleEnableElements(mapFiltersFormFieldsets, true);
+  toggleEnableElements(adFormFieldsets, true);
+  toggleEnableElements(adFormSelects, true);
+};
+
+/**
+ * @description Активное состояние страницы, формы разблокированы,
+ * на карте отражаются похожие объявления
+ */
+var activatePage = function () {
+  adForm.classList.remove('ad-form--disabled');
+  toggleEnableElements(mapFiltersFormSelects, false);
+  toggleEnableElements(mapFiltersFormFieldsets, false);
+  toggleEnableElements(adFormFieldsets, false);
+  toggleEnableElements(adFormSelects, false);
+  toggleEnableElements(adFormAdressInput, true);
+  adFormAdressInput.classList.add('ad-form--disabled');
+
+  setPinCoordinates();
+  showDialog();
+  showOffersPins();
+  showModalOffer(offerDataArray[0]);
+  document.removeEventListener('DOMContentLoaded', deactivatePage);
+};
+
+/**
+ * @description При загрузке страница находится в неактивном состоянии
+ */
+document.addEventListener('DOMContentLoaded', function () {
+  deactivatePage();
+  setPinCoordinates();
+});
+
+/**
+ * @description При клике на пин страница переводится в активное состояние
+ */
+pinButton.addEventListener('click', function () {
+  activatePage();
+});
+
+/**
+ * @description При нажании Enter с фокусом на пине страница переводится в активное состояние
+ */
+pinButton.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    activatePage();
+  }
+});
+
+/**
+ * @description При выборе количества комнат в форме создания объявления включается
+ * проверка соответствия количества мест количеству комнату и отключаются лишние опции при выборе количества мест
+ */
+adFormRoomsInput.addEventListener('input', function () {
+  checkRoomsAndCapacityValidity();
+  setOptionsForRooms();
+});
+
+/**
+ * @description При выборе количества мест в форме создания объявления включается
+ * проверка соответствия количества мест количеству комнату
+ */
+adFormCapacityInput.addEventListener('input', function () {
+  checkRoomsAndCapacityValidity();
+});
+
 generateOfferDataArray();
-showOffersPins();
-showModalOffer(offerDataArray[0]);
