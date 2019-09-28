@@ -251,14 +251,14 @@ var showModalOffer = function (itemData) {
  * Передача координат острого конца метки в поле адреса (форма создания объявления)
  * @param {Boolean} isStartingPosition - Находится ли объект на стратовой позиции (true/false)
  */
-var setPinCoordinates = function (isStartingPosition) {
-  var coordinatesArray = pinButton.getBoundingClientRect();
-  var pinX = Math.round(pageXOffset + coordinatesArray.left);
-  var pinY = Math.round(pageYOffset + coordinatesArray.top);
-  var pinCoordinates = (pinX + ADJUSTMENT_X) + ', ' + (pinY + ADJUSTMENT_Y);
-  if (isStartingPosition) {
-    pinCoordinates = (pinX + ADJUSTMENT_X) + ', ' + (pinY + ADJUSTMENT_X);
-  }
+var setPinCoordinates = function () {
+  var pinX = pinButton.style.left.slice(0, -2);
+  var pinY = pinButton.style.top.slice(0, -2);
+  pinX = Math.round(+pinX + ADJUSTMENT_X);
+  pinY = Math.round(+pinY + ADJUSTMENT_Y);
+
+  var pinCoordinates = pinX + ', ' + pinY;
+
   adFormAdressInput.value = pinCoordinates;
 };
 
@@ -340,7 +340,7 @@ var activatePage = function () {
   toggleEnableElements(adFormAdressInput, true);
   adFormAdressInput.classList.add('ad-form--disabled');
 
-  setPinCoordinates(false);
+  setPinCoordinates();
   showDialog();
   showOffersPins();
   showModalOffer(offerDataArray[0]);
@@ -352,7 +352,7 @@ var activatePage = function () {
  */
 document.addEventListener('DOMContentLoaded', function () {
   deactivatePage();
-  setPinCoordinates(true);
+  setPinCoordinates();
 });
 
 /**
