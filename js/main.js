@@ -290,7 +290,7 @@ var checkRoomsAndCapacityValidity = function () {
     adFormCapacityInput.setCustomValidity('Количество людей больше, чем мест. Выберете большее количество комнат');
   } else {
     adFormRoomsInput.setCustomValidity('');
-    adFormRoomsInput.setCustomValidity('');
+    adFormCapacityInput.setCustomValidity('');
   }
 };
 
@@ -299,7 +299,7 @@ var checkRoomsAndCapacityValidity = function () {
  * (при выборе количества комнат в форме создания объявления)
  */
 var setOptionsForRooms = function () {
-  Array.from(adFormCapacityOptions).forEach(function (option) {
+  [].forEach.call(adFormCapacityOptions, function (option) {
     option.disabled = option.value > adFormRoomsInput.value || adFormRoomsInput.value !== '100' && option.value === '0'
      || adFormRoomsInput.value === '100' && option.value !== '0';
   });
@@ -372,7 +372,7 @@ pinButton.addEventListener('keydown', function (evt) {
 });
 
 /**
- * @description При выборе выборе количества комнат в форме создания объявления включается
+ * @description При выборе количества комнат в форме создания объявления включается
  * проверка соответствия количества мест количеству комнату и отключаются лишние опции при выборе количества мест
  */
 adFormRoomsInput.addEventListener('input', function () {
@@ -381,7 +381,7 @@ adFormRoomsInput.addEventListener('input', function () {
 });
 
 /**
- * @description При выборе выборе количества мест в форме создания объявления включается
+ * @description При выборе количества мест в форме создания объявления включается
  * проверка соответствия количества мест количеству комнату
  */
 adFormCapacityInput.addEventListener('input', function () {
