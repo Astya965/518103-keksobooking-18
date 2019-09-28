@@ -22,8 +22,9 @@ var MIN_X = 0;
 var MAX_X = 1200;
 var MIN_Y = 130;
 var MAX_Y = 630;
-var ADJUSTMENT_X = 25;
-var ADJUSTMENT_Y = 70;
+var ADJUSTMENT_X = 65 / 2;
+var ADJUSTMENT_START_Y = 65;
+var ADJUSTMENT_Y = ADJUSTMENT_START_Y + 22;
 var OFFERS_LIST_LENGTH = 8;
 var DICTIONARY_ROOMS = {
   'one': 'комната',
@@ -148,7 +149,7 @@ var generateOfferData = function (index) {
 
     'offer': {
       'title': 'Предложение ' + getRandomNumber(1, 99),
-      'address': (locationX + ADJUSTMENT_X) + ', ' + (locationY + ADJUSTMENT_Y),
+      'address': (locationX + Math.round(ADJUSTMENT_X)) + ', ' + (locationY + ADJUSTMENT_Y),
       'price': getRandomNumber(1000, 100000),
       'type': getRandomElement(ACCOMMODATION_TYPES),
       'rooms': getRandomNumber(1, 8),
@@ -263,11 +264,16 @@ var showModalOffer = function (itemData) {
  * Передача координат острого конца метки в поле адреса (форма создания объявления)
  * @param {Boolean} isStartingPosition - Находится ли объект на стратовой позиции (true/false)
  */
-var setPinCoordinates = function () {
+var setPinCoordinates = function (isStartingPosition) {
   var pinX = pinButton.style.left.slice(0, -2);
   var pinY = pinButton.style.top.slice(0, -2);
   pinX = Math.round(+pinX + ADJUSTMENT_X);
-  pinY = Math.round(+pinY + ADJUSTMENT_Y);
+
+  if (isStartingPosition) {
+    pinY = Math.round(+pinY + (ADJUSTMENT_START_Y / 2));
+  } else {
+    pinY = Math.round(+pinY + ADJUSTMENT_Y);
+  }
 
   var pinCoordinates = pinX + ', ' + pinY;
 
@@ -400,7 +406,7 @@ var activatePage = function () {
   toggleEnableElements(adFormSelects, false);
   adFormAdressInput.classList.add('ad-form--disabled');
 
-  setPinCoordinates();
+  setPinCoordinates(false);
   setOptionsForRooms();
   showDialog();
   showOffersPins();
@@ -412,7 +418,7 @@ var activatePage = function () {
  */
 document.addEventListener('DOMContentLoaded', function () {
   deactivatePage();
-  setPinCoordinates();
+  setPinCoordinates(true);
 });
 
 /**
