@@ -57,6 +57,7 @@ var adFormRoomsInput = adForm.querySelector('#room_number');
 var adFormCapacityInput = adForm.querySelector('#capacity');
 var adFormCapacityOptions = adFormCapacityInput.querySelectorAll('option');
 var pinButton = mapElement.querySelector('.map__pin--main');
+var secondaryPin = mapElement.querySelector('.map__pin:not(.map__pin--main)');
 
 /**
  * @description Показывает карту
@@ -505,8 +506,9 @@ mapPinsContainer.addEventListener('click', togglePinPopup);
  * @description Открытие попапа с информацией об объявлении при нажатии Enter с фокусом на пине (при помощи делегирования)
  */
 mapPinsContainer.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ENTER_KEYCODE) {
-    togglePinPopup();
+  if ((evt.keyCode === ENTER_KEYCODE) && (document.activeElement === secondaryPin)) {
+    var currentData = evt.target.closest('.map__pin:not(.map__pin--main)').dataset.id;
+    showModalOffer(offerDataArray[currentData]);
   }
 });
 
