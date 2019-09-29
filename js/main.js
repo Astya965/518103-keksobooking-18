@@ -23,8 +23,9 @@ var MAX_X = 1200;
 var MIN_Y = 130;
 var MAX_Y = 630;
 var ADJUSTMENT_X = 65 / 2;
-var ADJUSTMENT_START_Y = 65;
-var ADJUSTMENT_Y = ADJUSTMENT_START_Y + 22;
+var ADJUSTMENT_MAIN_Y = 65;
+var ADJUSTMENT_TAIL_Y = 22;
+var ADJUSTMENT_Y = ADJUSTMENT_MAIN_Y + ADJUSTMENT_TAIL_Y;
 var OFFERS_LIST_LENGTH = 8;
 var DICTIONARY_ROOMS = {
   'one': 'комната',
@@ -164,6 +165,10 @@ var generateOfferData = function (index) {
     'location': {
       'x': locationX,
       'y': locationY
+    },
+
+    'data': {
+      'dataId': index
     }
   };
 };
@@ -194,6 +199,7 @@ var renderOffer = function (itemData) {
   pinElement.style.top = itemData.location.y + 'px';
   pinElementImg.src = itemData.author.avatar;
   pinElementImg.alt = itemData.offer.description;
+  pinElement.setAttribute('data-id', itemData.data.dataId);
 
   return pinElement;
 };
@@ -270,7 +276,7 @@ var setPinCoordinates = function (isStartingPosition) {
   pinX = Math.round(+pinX + ADJUSTMENT_X);
 
   if (isStartingPosition) {
-    pinY = Math.round(+pinY + (ADJUSTMENT_START_Y / 2));
+    pinY = Math.round(+pinY + (ADJUSTMENT_MAIN_Y / 2));
   } else {
     pinY = Math.round(+pinY + ADJUSTMENT_Y);
   }
@@ -362,15 +368,6 @@ var setPriceMinValue = function () {
   adFormPriceInput.min = ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationInput.value];
   adFormPriceInput.placeholder = ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationInput.value];
 };
-
-/**
- * @description Синхронизация значений «Время заезда» и «Время выезда»
- * при изменении значения одного поля, во втором выделяется соответствующее ему
- */
-var setTime = function () {
-  adFormTimeoutInput.value = adFormTimeinInput.value;
-};
-
 
 /**
  * Добавляет или убирает атрибут disabled всем элементам коллекции
@@ -475,14 +472,14 @@ adFormAccommodationInput.addEventListener('change', function () {
  * @description При выборе времени отъезда оно синхронезируется со времени заезда
  */
 adFormTimeoutInput.addEventListener('change', function () {
-  setTime();
+  adFormTimeoutInput.value = adFormTimeinInput.value;
 });
 
 /**
  * @description При выборе времени заезда оно синхронезируется со времени отъезда
  */
 adFormTimeinInput.addEventListener('change', function () {
-  setTime();
+  adFormTimeinInput.value = adFormTimeoutInput.value;
 });
 
 /**
@@ -490,12 +487,12 @@ adFormTimeinInput.addEventListener('change', function () {
  * @param {evt} evt
  */
 var showPinPopup = function (evt) {
-  var pinButtonsArray = [].slice.call(mapPinsContainer.querySelectorAll('.map__pin[type="button"]'));
-  var pinButtonsImgArray = [].slice.call(mapPinsContainer.querySelectorAll('.map__pin[type="button"]>img'));
+  var currentData = evt.target.dataset.id;
   if (evt.target.matches('.map__pin[type="button"]')) {
-    showModalOffer(offerDataArray[pinButtonsArray.indexOf(evt.target)]);
-  } else if (evt.target.matches('.map__pin[type="button"]>img')) {
-    showModalOffer(offerDataArray[pinButtonsImgArray.indexOf(evt.target)]);
+    showModalOffer(offerDataArray[currentData]);
+  } else if (evt.target.closest('.map__pin[type="button"]')) {
+    currentData = evt.target.closest('.map__pin[type="button"]').dataset.id;
+    showModalOffer(offerDataArray[currentData]);
   }
 };
 
