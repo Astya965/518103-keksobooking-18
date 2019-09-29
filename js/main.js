@@ -483,38 +483,30 @@ adFormTimeinInput.addEventListener('change', function () {
 });
 
 /**
- * Вызов попапа, если целью события является пин или картинка пина
+ * Переключение отражения попапа (открытие или закрытие)
  * @param {evt} evt
  */
-var showPinPopup = function (evt) {
-  var currentData = evt.target.dataset.id;
-  if (evt.target.matches('.map__pin[type="button"]')) {
-    showModalOffer(offerDataArray[currentData]);
-  } else if (evt.target.closest('.map__pin[type="button"]')) {
-    currentData = evt.target.closest('.map__pin[type="button"]').dataset.id;
+var togglePinPopup = function (evt) {
+  var pinPopup = document.querySelector('.map__card');
+  if (mapElement.contains(pinPopup)) {
+    mapElement.removeChild(pinPopup);
+  } else if (evt.target.closest('.map__pin:not(.map__pin--main)')) {
+    var currentData = evt.target.closest('.map__pin:not(.map__pin--main)').dataset.id;
     showModalOffer(offerDataArray[currentData]);
   }
 };
 
 /**
- * Удаление попапа
+ * @description Открытие попапа с информацией об объявлении при клике на пин (при помощи делегирования)
  */
-var closePinPopup = function () {
-  var pinPopup = document.querySelector('.map__card');
-  mapElement.removeChild(pinPopup);
-};
+mapPinsContainer.addEventListener('click', togglePinPopup);
 
 /**
- * @description Открытие попапа с информацией об объявлении при нажатии на пин (при помощи делегирования)
- */
-mapPinsContainer.addEventListener('click', showPinPopup);
-
-/**
- * @description Открытие попапа с информацией об объявлении при нажатии на пин (при помощи делегирования)
+ * @description Открытие попапа с информацией об объявлении при нажатии Enter с фокусом на пине (при помощи делегирования)
  */
 mapPinsContainer.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ENTER_KEYCODE) {
-    showPinPopup();
+    togglePinPopup();
   }
 });
 
@@ -523,7 +515,7 @@ mapPinsContainer.addEventListener('keydown', function (evt) {
  */
 document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    closePinPopup();
+    togglePinPopup();
   }
 });
 
@@ -532,7 +524,7 @@ document.addEventListener('keydown', function (evt) {
  */
 document.addEventListener('click', function (evt) {
   if (evt.target.matches('.popup__close')) {
-    closePinPopup();
+    togglePinPopup();
   }
 });
 
