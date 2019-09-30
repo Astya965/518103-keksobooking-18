@@ -1,5 +1,6 @@
 'use strict';
 
+var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 var ACCOMMODATION_TYPES = ['palace', 'flat', 'house', 'bungalo'];
 var ACCOMMODATION_TYPES_MAP = {
@@ -8,6 +9,12 @@ var ACCOMMODATION_TYPES_MAP = {
   'house': 'Дом',
   'palace': 'Дворец'
 };
+var ACCOMMODATION_TYPE_TO_PRICE_MAP = {
+  'bungalo': 0,
+  'flat': 1000,
+  'house': 5000,
+  'palace': 10000
+};
 var CHECKIN_CHECKOUT_TIME = ['12:00', '13:00', '14:00'];
 var FEATURES_POOL = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var PHOTO_COUNT = 3;
@@ -15,8 +22,10 @@ var MIN_X = 0;
 var MAX_X = 1200;
 var MIN_Y = 130;
 var MAX_Y = 630;
-var ADJUSTMENT_X = 25;
-var ADJUSTMENT_Y = 70;
+var ADJUSTMENT_X = 65 / 2;
+var ADJUSTMENT_MAIN_Y = 65;
+var ADJUSTMENT_TAIL_Y = 22;
+var ADJUSTMENT_Y = ADJUSTMENT_MAIN_Y + ADJUSTMENT_TAIL_Y;
 var OFFERS_LIST_LENGTH = 8;
 var DICTIONARY_ROOMS = {
   'one': 'комната',
@@ -29,31 +38,26 @@ var DICTIONARY_GUESTS = {
 var offerDataArray = [];
 var mapElement = document.querySelector('.map');
 var mapFilters = document.querySelector('.map__filters-container');
+var mapPinsContainer = document.querySelector('.map__pins');
 var offersTimplate = document.querySelector('#pin').content.querySelector('.map__pin');
 var offersPopupTimplate = document.querySelector('#card').content;
-var popupOfferElement = offersPopupTimplate.cloneNode(true);
-var popupOfferTitle = popupOfferElement.querySelector('.popup__title');
-var popupOfferAddress = popupOfferElement.querySelector('.popup__text--address');
-var popupOfferPrice = popupOfferElement.querySelector('.popup__text--price');
-var popupOfferType = popupOfferElement.querySelector('.popup__type');
-var popupOfferCapacity = popupOfferElement.querySelector('.popup__text--capacity');
-var popupOfferTime = popupOfferElement.querySelector('.popup__text--time');
-var popupOfferFeatures = popupOfferElement.querySelector('.popup__features');
-var popupOfferDescription = popupOfferElement.querySelector('.popup__description');
-var popupOfferPhotos = popupOfferElement.querySelector('.popup__photos');
-var popupOfferPhotosElement = popupOfferPhotos.querySelector('.popup__photo');
-var popupOfferAvatar = popupOfferElement.querySelector('.popup__avatar');
 var mapFiltersForm = document.querySelector('.map__filters');
 var mapFiltersFormSelects = mapFiltersForm.querySelectorAll('select');
 var mapFiltersFormFieldsets = mapFiltersForm.querySelectorAll('fieldset');
 var adForm = document.querySelector('.ad-form');
 var adFormSelects = adForm.querySelectorAll('select');
 var adFormFieldsets = adForm.querySelectorAll('fieldset');
+var adFormTitleInput = adForm.querySelector('#title');
 var adFormAdressInput = adForm.querySelector('#address');
+var adFormAccommodationInput = adForm.querySelector('#type');
+var adFormPriceInput = adForm.querySelector('#price');
+var adFormTimeinInput = adForm.querySelector('#timein');
+var adFormTimeoutInput = adForm.querySelector('#timeout');
 var adFormRoomsInput = adForm.querySelector('#room_number');
 var adFormCapacityInput = adForm.querySelector('#capacity');
 var adFormCapacityOptions = adFormCapacityInput.querySelectorAll('option');
 var pinButton = mapElement.querySelector('.map__pin--main');
+var secondaryPin = mapElement.querySelector('.map__pin:not(.map__pin--main)');
 
 /**
  * @description Показывает карту
@@ -147,7 +151,7 @@ var generateOfferData = function (index) {
 
     'offer': {
       'title': 'Предложение ' + getRandomNumber(1, 99),
-      'address': (locationX + ADJUSTMENT_X) + ', ' + (locationY + ADJUSTMENT_Y),
+      'address': (locationX + Math.round(ADJUSTMENT_X)) + ', ' + (locationY + ADJUSTMENT_Y),
       'price': getRandomNumber(1000, 100000),
       'type': getRandomElement(ACCOMMODATION_TYPES),
       'rooms': getRandomNumber(1, 8),
@@ -162,6 +166,10 @@ var generateOfferData = function (index) {
     'location': {
       'x': locationX,
       'y': locationY
+    },
+
+    'data': {
+      'dataId': index
     }
   };
 };
@@ -192,38 +200,9 @@ var renderOffer = function (itemData) {
   pinElement.style.top = itemData.location.y + 'px';
   pinElementImg.src = itemData.author.avatar;
   pinElementImg.alt = itemData.offer.description;
+  pinElement.setAttribute('data-id', itemData.data.dataId);
 
   return pinElement;
-};
-
-/**
- * @description Отображение доступных удобств в объявлении для попапа
- * @param {Object} itemData - Данные объявления, которые передаются в объявление
- */
-var renderFeaturesInPopup = function (itemData) {
-  popupOfferFeatures.innerHTML = '';
-  for (var i = 0; i < itemData.offer.features.length; i++) {
-    var createElement = document.createElement('li');
-    createElement.classList.add('popup__feature');
-    createElement.classList.add('popup__feature--' + itemData.offer.features[i]);
-    popupOfferFeatures.appendChild(createElement);
-  }
-};
-
-/**
- * @description Отображение фотографий в объявлении для попапа
- * @param {Object} itemData - Данные объявления, которые передаются в объявление
- */
-var renderPhotosInPopup = function (itemData) {
-  for (var j = 0; j < itemData.offer.photos.length; j++) {
-    if (j === 0) {
-      popupOfferPhotosElement.src = itemData.offer.photos[j];
-    } else {
-      var clonedPhotosElement = popupOfferPhotosElement.cloneNode(true);
-      clonedPhotosElement.src = itemData.offer.photos[j];
-      popupOfferPhotos.appendChild(clonedPhotosElement);
-    }
-  }
 };
 
 /**
@@ -231,6 +210,47 @@ var renderPhotosInPopup = function (itemData) {
  * @param {Object} itemData - Данные объявления, которые передаются в объявление
  */
 var showModalOffer = function (itemData) {
+  var popupOfferElement = offersPopupTimplate.cloneNode(true);
+  var popupOfferTitle = popupOfferElement.querySelector('.popup__title');
+  var popupOfferAddress = popupOfferElement.querySelector('.popup__text--address');
+  var popupOfferPrice = popupOfferElement.querySelector('.popup__text--price');
+  var popupOfferType = popupOfferElement.querySelector('.popup__type');
+  var popupOfferCapacity = popupOfferElement.querySelector('.popup__text--capacity');
+  var popupOfferTime = popupOfferElement.querySelector('.popup__text--time');
+  var popupOfferFeatures = popupOfferElement.querySelector('.popup__features');
+  var popupOfferDescription = popupOfferElement.querySelector('.popup__description');
+  var popupOfferPhotos = popupOfferElement.querySelector('.popup__photos');
+  var popupOfferPhotosElement = popupOfferPhotos.querySelector('.popup__photo');
+  var popupOfferAvatar = popupOfferElement.querySelector('.popup__avatar');
+
+  /**
+   * @description Отображение доступных удобств в объявлении для попапа
+   */
+  var renderFeaturesInPopup = function () {
+    popupOfferFeatures.innerHTML = '';
+    for (var i = 0; i < itemData.offer.features.length; i++) {
+      var createElement = document.createElement('li');
+      createElement.classList.add('popup__feature');
+      createElement.classList.add('popup__feature--' + itemData.offer.features[i]);
+      popupOfferFeatures.appendChild(createElement);
+    }
+  };
+
+  /**
+   * @description Отображение фотографий в объявлении для попапа
+   */
+  var renderPhotosInPopup = function () {
+    for (var j = 0; j < itemData.offer.photos.length; j++) {
+      if (j === 0) {
+        popupOfferPhotosElement.src = itemData.offer.photos[j];
+      } else {
+        var clonedPhotosElement = popupOfferPhotosElement.cloneNode(true);
+        clonedPhotosElement.src = itemData.offer.photos[j];
+        popupOfferPhotos.appendChild(clonedPhotosElement);
+      }
+    }
+  };
+
   popupOfferTitle.textContent = itemData.offer.title;
   popupOfferAddress.textContent = itemData.offer.address;
   popupOfferPrice.textContent = itemData.offer.price + '₽/ночь';
@@ -251,11 +271,16 @@ var showModalOffer = function (itemData) {
  * Передача координат острого конца метки в поле адреса (форма создания объявления)
  * @param {Boolean} isStartingPosition - Находится ли объект на стратовой позиции (true/false)
  */
-var setPinCoordinates = function () {
+var setPinCoordinates = function (isStartingPosition) {
   var pinX = pinButton.style.left.slice(0, -2);
   var pinY = pinButton.style.top.slice(0, -2);
   pinX = Math.round(+pinX + ADJUSTMENT_X);
-  pinY = Math.round(+pinY + ADJUSTMENT_Y);
+
+  if (isStartingPosition) {
+    pinY = Math.round(+pinY + (ADJUSTMENT_MAIN_Y / 2));
+  } else {
+    pinY = Math.round(+pinY + ADJUSTMENT_Y);
+  }
 
   var pinCoordinates = pinX + ', ' + pinY;
 
@@ -266,7 +291,6 @@ var setPinCoordinates = function () {
  * @description Показывает пин объявления на карте
  */
 var showOffersPins = function () {
-  var mapPinsContainer = document.querySelector('.map__pins');
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < offerDataArray.length; i++) {
@@ -295,6 +319,38 @@ var checkRoomsAndCapacityValidity = function () {
 };
 
 /**
+ * Проверка соответствия заголовка требованиям
+ */
+var checkTitleValidity = function () {
+  if (adFormTitleInput.validity.tooShort) {
+    adFormTitleInput.setCustomValidity('Заголовок объявления должен состоять минимум из 30 символов');
+  } else if (adFormTitleInput.validity.tooLong) {
+    adFormTitleInput.setCustomValidity('Заголовок объявления не должен превышать 100 символов');
+  } else if (adFormTitleInput.validity.valueMissing) {
+    adFormTitleInput.setCustomValidity('Пожалуйста, введите заголовок');
+  } else {
+    adFormTitleInput.setCustomValidity('');
+  }
+};
+
+/**
+ * Проверка соответствия заголовка требованиям
+ */
+var checkPriceValidity = function () {
+  if (adFormPriceInput.validity.rangeUnderflow) {
+    adFormPriceInput.setCustomValidity('Цена за ночь аренды не должна быть меньше ' + adFormPriceInput.min + '. Увеличьте значение');
+  } else if (adFormPriceInput.validity.rangeOverflow) {
+    adFormPriceInput.setCustomValidity('Цена за ночь аренды не должна превышать 1 000 000. Уменьшите значение');
+  } else if (adFormPriceInput.validity.valueMissing) {
+    adFormPriceInput.setCustomValidity('Пожалуйста, введите цену за ночь аренды');
+  } else if (adFormPriceInput.validity.typeMismatch) {
+    adFormPriceInput.setCustomValidity('Цена может состоять только из цифр. Введите число');
+  } else {
+    adFormPriceInput.setCustomValidity('');
+  }
+};
+
+/**
  * @description Отключение неподходящих вариантов для данного количества комнат
  * (при выборе количества комнат в форме создания объявления)
  */
@@ -303,6 +359,15 @@ var setOptionsForRooms = function () {
     option.disabled = option.value > adFormRoomsInput.value || adFormRoomsInput.value !== '100' && option.value === '0'
      || adFormRoomsInput.value === '100' && option.value !== '0';
   });
+};
+
+/**
+ * @description Изменение минимального значение поля «Цена за ночь»
+ * в зависимости от значения «Тип жилья»
+ */
+var setPriceMinValue = function () {
+  adFormPriceInput.min = ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationInput.value];
+  adFormPriceInput.placeholder = ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationInput.value];
 };
 
 /**
@@ -337,13 +402,13 @@ var activatePage = function () {
   toggleEnableElements(mapFiltersFormFieldsets, false);
   toggleEnableElements(adFormFieldsets, false);
   toggleEnableElements(adFormSelects, false);
-  toggleEnableElements(adFormAdressInput, true);
   adFormAdressInput.classList.add('ad-form--disabled');
 
-  setPinCoordinates();
+  setPinCoordinates(false);
+  setOptionsForRooms();
+  setPriceMinValue();
   showDialog();
   showOffersPins();
-  showModalOffer(offerDataArray[0]);
   document.removeEventListener('DOMContentLoaded', deactivatePage);
 };
 
@@ -352,14 +417,16 @@ var activatePage = function () {
  */
 document.addEventListener('DOMContentLoaded', function () {
   deactivatePage();
-  setPinCoordinates();
+  setPinCoordinates(true);
 });
 
 /**
  * @description При клике на пин страница переводится в активное состояние
  */
-pinButton.addEventListener('click', function () {
-  activatePage();
+pinButton.addEventListener('mousedown', function () {
+  if (pinButton.closest('.map--faded') !== null) {
+    activatePage();
+  }
 });
 
 /**
@@ -381,11 +448,92 @@ adFormRoomsInput.addEventListener('input', function () {
 });
 
 /**
+ * @description При выборе заголовка в форме создания объявления включается
+ * проверка соответствия на заполнение формы и длину названия
+ */
+adFormTitleInput.addEventListener('input', function () {
+  checkTitleValidity();
+});
+
+/**
  * @description При выборе количества мест в форме создания объявления включается
  * проверка соответствия количества мест количеству комнату
  */
-adFormCapacityInput.addEventListener('input', function () {
-  checkRoomsAndCapacityValidity();
+adFormPriceInput.addEventListener('input', function () {
+  checkPriceValidity();
+  setPriceMinValue();
+});
+
+/**
+ * @description При выборе количества мест в форме создания объявления включается
+ * проверка соответствия количества мест количеству комнату
+ */
+adFormAccommodationInput.addEventListener('change', function () {
+  setPriceMinValue();
+});
+
+/**
+ * @description При выборе времени отъезда оно синхронезируется со времени заезда
+ */
+adFormTimeoutInput.addEventListener('change', function () {
+  adFormTimeinInput.value = adFormTimeoutInput.value;
+});
+
+/**
+ * @description При выборе времени заезда оно синхронезируется со времени отъезда
+ */
+adFormTimeinInput.addEventListener('change', function () {
+  adFormTimeoutInput.value = adFormTimeinInput.value;
+});
+
+/**
+ * Закртыие карточки
+ * @param {evt} evt
+ */
+var closeCard = function () {
+  var pinPopup = document.querySelector('.map__card');
+  if (mapElement.contains(pinPopup)) {
+    mapElement.removeChild(pinPopup);
+  }
+};
+
+/**
+ * @description Открытие попапа с информацией об объявлении при клике на пин (при помощи делегирования)
+ */
+mapPinsContainer.addEventListener('click', function (evt) {
+  closeCard();
+  if (evt.target.closest('.map__pin:not(.map__pin--main)')) {
+    var currentData = evt.target.closest('.map__pin:not(.map__pin--main)').dataset.id;
+    showModalOffer(offerDataArray[currentData]);
+  }
+});
+
+/**
+ * @description Открытие попапа с информацией об объявлении при нажатии Enter с фокусом на пине (при помощи делегирования)
+ */
+mapPinsContainer.addEventListener('keydown', function (evt) {
+  if ((evt.keyCode === ENTER_KEYCODE) && (document.activeElement === secondaryPin)) {
+    var currentData = evt.target.closest('.map__pin:not(.map__pin--main)').dataset.id;
+    showModalOffer(offerDataArray[currentData]);
+  }
+});
+
+/**
+ * @description Зыкрытие попапа с информацией об объявлении при нажатии ECS
+ */
+document.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeCard();
+  }
+});
+
+/**
+ * @description Зыкрытие попапа с информацией об объявлении при клике на крестик (при помощи делегирования)
+ */
+document.addEventListener('click', function (evt) {
+  if (evt.target.matches('.popup__close')) {
+    closeCard();
+  }
 });
 
 generateOfferDataArray();
