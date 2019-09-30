@@ -473,14 +473,14 @@ adFormAccommodationInput.addEventListener('change', function () {
  * @description При выборе времени отъезда оно синхронезируется со времени заезда
  */
 adFormTimeoutInput.addEventListener('change', function () {
-  adFormTimeoutInput.value = adFormTimeinInput.value;
+  adFormTimeinInput.value = adFormTimeoutInput.value;
 });
 
 /**
  * @description При выборе времени заезда оно синхронезируется со времени отъезда
  */
 adFormTimeinInput.addEventListener('change', function () {
-  adFormTimeinInput.value = adFormTimeoutInput.value;
+  adFormTimeoutInput.value = adFormTimeinInput.value;
 });
 
 /**
