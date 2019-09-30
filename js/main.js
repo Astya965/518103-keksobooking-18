@@ -406,6 +406,7 @@ var activatePage = function () {
 
   setPinCoordinates(false);
   setOptionsForRooms();
+  setPriceMinValue();
   showDialog();
   showOffersPins();
   document.removeEventListener('DOMContentLoaded', deactivatePage);
@@ -423,7 +424,9 @@ document.addEventListener('DOMContentLoaded', function () {
  * @description При клике на пин страница переводится в активное состояние
  */
 pinButton.addEventListener('mousedown', function () {
-  activatePage();
+  if (pinButton.closest('.map--faded') !== null) {
+    activatePage();
+  }
 });
 
 /**
@@ -484,23 +487,26 @@ adFormTimeinInput.addEventListener('change', function () {
 });
 
 /**
- * Переключение отражения попапа (открытие или закрытие)
+ * Закртыие карточки
  * @param {evt} evt
  */
-var togglePinPopup = function (evt) {
+var closeCard = function () {
   var pinPopup = document.querySelector('.map__card');
   if (mapElement.contains(pinPopup)) {
     mapElement.removeChild(pinPopup);
-  } else if (evt.target.closest('.map__pin:not(.map__pin--main)')) {
-    var currentData = evt.target.closest('.map__pin:not(.map__pin--main)').dataset.id;
-    showModalOffer(offerDataArray[currentData]);
   }
 };
 
 /**
  * @description Открытие попапа с информацией об объявлении при клике на пин (при помощи делегирования)
  */
-mapPinsContainer.addEventListener('click', togglePinPopup);
+mapPinsContainer.addEventListener('click', function (evt) {
+  closeCard();
+  if (evt.target.closest('.map__pin:not(.map__pin--main)')) {
+    var currentData = evt.target.closest('.map__pin:not(.map__pin--main)').dataset.id;
+    showModalOffer(offerDataArray[currentData]);
+  }
+});
 
 /**
  * @description Открытие попапа с информацией об объявлении при нажатии Enter с фокусом на пине (при помощи делегирования)
@@ -517,7 +523,7 @@ mapPinsContainer.addEventListener('keydown', function (evt) {
  */
 document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
-    togglePinPopup();
+    closeCard();
   }
 });
 
@@ -526,7 +532,7 @@ document.addEventListener('keydown', function (evt) {
  */
 document.addEventListener('click', function (evt) {
   if (evt.target.matches('.popup__close')) {
-    togglePinPopup();
+    closeCard();
   }
 });
 
