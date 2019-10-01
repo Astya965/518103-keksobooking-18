@@ -67,8 +67,64 @@
     window.util.elems.mapElement.insertBefore(popupOfferElement, mapFilters);
   };
 
-  window.card = {
-    showModalOffer: showModalOffer
+  /**
+   * Закртыие карточки
+   */
+  var closeCard = function () {
+    var pinPopup = document.querySelector('.map__card');
+    if (window.util.elems.mapElement.contains(pinPopup)) {
+      window.util.elems.mapElement.removeChild(pinPopup);
+    }
   };
+
+  /**
+   * Открытие карточки
+   * @param {Event} evt
+   */
+  var openCard = function (evt) {
+    var currentPin = evt.target.closest('.map__pin:not(.map__pin--main)');
+    if (currentPin) {
+      var currentId = currentPin.dataset.id;
+      var filtered = window.data.offerDataArray.filter(function (item) {
+        return item.data.dataId == currentId;
+      });
+      showModalOffer(filtered[0]);
+    }
+  };
+
+  /**
+   * @description Открытие попапа с информацией об объявлении при клике на пин (при помощи делегирования)
+   */
+  window.util.elems.mapPinsContainer.addEventListener('click', function (evt) {
+    closeCard();
+    openCard(evt);
+  });
+
+  /**
+   * @description Открытие попапа с информацией об объявлении при нажатии Enter с фокусом на пине (при помощи делегирования)
+   */
+  window.util.elems.mapPinsContainer.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === window.util.keycode.ENTER_KEYCODE) {
+      openCard(evt);
+    }
+  });
+
+  /**
+   * @description Зыкрытие попапа с информацией об объявлении при нажатии ECS
+   */
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === window.util.keycode.ESC_KEYCODE) {
+      closeCard();
+    }
+  });
+
+  /**
+   * @description Зыкрытие попапа с информацией об объявлении при клике на крестик (при помощи делегирования)
+   */
+  document.addEventListener('click', function (evt) {
+    if (evt.target.matches('.popup__close')) {
+      closeCard();
+    }
+  });
 
 })();

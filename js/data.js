@@ -29,7 +29,6 @@
     'one': 'гостя',
     'few': 'гостей',
     'other': 'гостей'};
-  var offerDataArray = [];
   var ACCOMMODATION_TYPE_TO_PRICE_MAP = {
     'bungalo': 0,
     'flat': 1000,
@@ -90,17 +89,17 @@
 
   /**
    * Генерация массива данных
-   * @return {Array} Массив сгенерированнных данных
+   * @return {Array}
    */
   var generateOfferDataArray = function () {
+    var someArray = [];
     for (var i = 0; i < OFFERS_LIST_LENGTH; i++) {
       var offerDataElemenet = generateOfferData(i);
-      offerDataArray.push(offerDataElemenet);
+      someArray.push(offerDataElemenet);
     }
-
-    return offerDataArray;
+    return someArray;
   };
-  generateOfferDataArray();
+  var offerDataArray = generateOfferDataArray();
 
   window.data = {
     maps: {
@@ -113,7 +112,11 @@
     const: {
       ADJUSTMENT_X: ADJUSTMENT_X,
       ADJUSTMENT_MAIN_Y: ADJUSTMENT_MAIN_Y,
-      ADJUSTMENT_Y: ADJUSTMENT_Y
+      ADJUSTMENT_Y: ADJUSTMENT_Y,
+      MIN_X: MIN_X,
+      MAX_X: MAX_X,
+      MIN_Y: MIN_Y,
+      MAX_Y: MAX_Y
     },
 
     offerDataArray: offerDataArray

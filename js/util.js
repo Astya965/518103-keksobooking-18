@@ -7,6 +7,7 @@
 
   var mapElement = document.querySelector('.map');
   var adForm = document.querySelector('.ad-form');
+  var mapPinsContainer = document.querySelector('.map__pins');
   var pinButton = mapElement.querySelector('.map__pin--main');
 
   /**
@@ -95,6 +96,7 @@
     elems: {
       mapElement: mapElement,
       adForm: adForm,
+      mapPinsContainer: mapPinsContainer,
       pinButton: pinButton
     }
   };

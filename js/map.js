@@ -7,13 +7,10 @@
   var adFormSelects = window.util.elems.adForm.querySelectorAll('select');
   var adFormFieldsets = window.util.elems.adForm.querySelectorAll('fieldset');
 
-  var mapPinsContainer = document.querySelector('.map__pins');
-  var secondaryPin = window.util.elems.mapElement.querySelector('.map__pin:not(.map__pin--main)');
-
   /**
    * @description Показывает карту
    */
-  var showDialog = function () {
+  var showMap = function () {
     window.util.elems.mapElement.classList.remove('map--faded');
   };
 
@@ -28,7 +25,7 @@
       fragment.appendChild(window.pin.renderOffer(offerData));
     }
 
-    mapPinsContainer.appendChild(fragment);
+    window.util.elems.mapPinsContainer.appendChild(fragment);
   };
 
   /**
@@ -46,17 +43,19 @@
    * на карте отражаются похожие объявления
    */
   var activatePage = function () {
+    if (!window.util.elems.mapElement.classList.contains('map--faded')) {
+      return;
+    }
     window.util.elems.adForm.classList.remove('ad-form--disabled');
     window.util.functions.toggleEnableElements(mapFiltersFormSelects, false);
     window.util.functions.toggleEnableElements(mapFiltersFormFieldsets, false);
     window.util.functions.toggleEnableElements(adFormFieldsets, false);
     window.util.functions.toggleEnableElements(adFormSelects, false);
-    window.form.elems.adFormAdressInput.classList.add('ad-form--disabled');
 
     window.form.functions.setPinCoordinates(false);
     window.form.functions.setOptionsForRooms();
     window.form.functions.setPriceMinValue();
-    showDialog();
+    showMap();
     showOffersPins();
     document.removeEventListener('DOMContentLoaded', deactivatePage);
   };
@@ -73,66 +72,15 @@
    * @description При клике на пин страница переводится в активное состояние
    */
   window.util.elems.pinButton.addEventListener('mousedown', function () {
-    if (window.util.elems.pinButton.closest('.map--faded') !== null) {
-      activatePage();
-    }
+    activatePage();
   });
 
   /**
    * @description При нажании Enter с фокусом на пине страница переводится в активное состояние
    */
   window.util.elems.pinButton.addEventListener('keydown', function (evt) {
-    if ((evt.keyCode === window.util.keycode.ENTER_KEYCODE) && (window.util.elems.pinButton.closest('.map--faded') !== null)) {
+    if (evt.keyCode === window.util.keycode.ENTER_KEYCODE) {
       activatePage();
-    }
-  });
-
-  /**
-   * Закртыие карточки
-   */
-  var closeCard = function () {
-    var pinPopup = document.querySelector('.map__card');
-    if (window.util.elems.mapElement.contains(pinPopup)) {
-      window.util.elems.mapElement.removeChild(pinPopup);
-    }
-  };
-
-  /**
-   * @description Открытие попапа с информацией об объявлении при клике на пин (при помощи делегирования)
-   */
-  mapPinsContainer.addEventListener('click', function (evt) {
-    closeCard();
-    if (evt.target.closest('.map__pin:not(.map__pin--main)')) {
-      var currentData = evt.target.closest('.map__pin:not(.map__pin--main)').dataset.id;
-      window.card.showModalOffer(window.data.offerDataArray[currentData]);
-    }
-  });
-
-  /**
-   * @description Открытие попапа с информацией об объявлении при нажатии Enter с фокусом на пине (при помощи делегирования)
-   */
-  mapPinsContainer.addEventListener('keydown', function (evt) {
-    if ((evt.keyCode === window.util.keycode.ENTER_KEYCODE) && (document.activeElement === secondaryPin)) {
-      var currentData = evt.target.closest('.map__pin:not(.map__pin--main)').dataset.id;
-      window.card.showModalOffer(window.data.offerDataArray[currentData]);
-    }
-  });
-
-  /**
-   * @description Зыкрытие попапа с информацией об объявлении при нажатии ECS
-   */
-  document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.keycode.ESC_KEYCODE) {
-      closeCard();
-    }
-  });
-
-  /**
-   * @description Зыкрытие попапа с информацией об объявлении при клике на крестик (при помощи делегирования)
-   */
-  document.addEventListener('click', function (evt) {
-    if (evt.target.matches('.popup__close')) {
-      closeCard();
     }
   });
 
