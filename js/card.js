@@ -84,9 +84,9 @@
   var openCard = function (evt) {
     var currentPin = evt.target.closest('.map__pin:not(.map__pin--main)');
     if (currentPin) {
-      var currentId = currentPin.dataset.id;
+      var currentId = +currentPin.dataset.id;
       var filtered = window.data.offerDataArray.filter(function (item) {
-        return item.data.dataId == currentId;
+        return item.data.dataId === currentId;
       });
       showModalOffer(filtered[0]);
     }
