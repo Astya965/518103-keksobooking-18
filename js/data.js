@@ -82,7 +82,7 @@
       },
 
       'data': {
-        'dataId': index
+        'dataId': 'offerDataId' + (index + 1)
       }
     };
   };
