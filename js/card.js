@@ -1,0 +1,130 @@
+'use strict';
+
+(function () {
+
+  var offersPopupTimplate = document.querySelector('#card').content;
+  var mapFilters = document.querySelector('.map__filters-container');
+
+  /**
+  * Генерация модального окна с информацией об объявлении
+  * @param {Object} itemData - Данные объявления, которые передаются в объявление
+  */
+  var showModalOffer = function (itemData) {
+    var popupOfferElement = offersPopupTimplate.cloneNode(true);
+    var popupOfferTitle = popupOfferElement.querySelector('.popup__title');
+    var popupOfferAddress = popupOfferElement.querySelector('.popup__text--address');
+    var popupOfferPrice = popupOfferElement.querySelector('.popup__text--price');
+    var popupOfferType = popupOfferElement.querySelector('.popup__type');
+    var popupOfferCapacity = popupOfferElement.querySelector('.popup__text--capacity');
+    var popupOfferTime = popupOfferElement.querySelector('.popup__text--time');
+    var popupOfferFeatures = popupOfferElement.querySelector('.popup__features');
+    var popupOfferDescription = popupOfferElement.querySelector('.popup__description');
+    var popupOfferPhotos = popupOfferElement.querySelector('.popup__photos');
+    var popupOfferPhotosElement = popupOfferPhotos.querySelector('.popup__photo');
+    var popupOfferAvatar = popupOfferElement.querySelector('.popup__avatar');
+
+    /**
+     * @description Отображение доступных удобств в объявлении для попапа
+     */
+    var renderFeaturesInPopup = function () {
+      popupOfferFeatures.innerHTML = '';
+      for (var i = 0; i < itemData.offer.features.length; i++) {
+        var createElement = document.createElement('li');
+        createElement.classList.add('popup__feature');
+        createElement.classList.add('popup__feature--' + itemData.offer.features[i]);
+        popupOfferFeatures.appendChild(createElement);
+      }
+    };
+
+    /**
+     * @description Отображение фотографий в объявлении для попапа
+     */
+    var renderPhotosInPopup = function () {
+      for (var j = 0; j < itemData.offer.photos.length; j++) {
+        if (j === 0) {
+          popupOfferPhotosElement.src = itemData.offer.photos[j];
+        } else {
+          var clonedPhotosElement = popupOfferPhotosElement.cloneNode(true);
+          clonedPhotosElement.src = itemData.offer.photos[j];
+          popupOfferPhotos.appendChild(clonedPhotosElement);
+        }
+      }
+    };
+
+    popupOfferTitle.textContent = itemData.offer.title;
+    popupOfferAddress.textContent = itemData.offer.address;
+    popupOfferPrice.textContent = itemData.offer.price + '₽/ночь';
+    popupOfferType.textContent = window.data.maps.ACCOMMODATION_TYPES_MAP[itemData.offer.type];
+    popupOfferCapacity.textContent = itemData.offer.rooms + ' ' + window.util.functions.connectNounAndNumral(itemData.offer.rooms, window.data.maps.DICTIONARY_ROOMS) +
+    ' для ' + itemData.offer.guests + ' ' + window.util.functions.connectNounAndNumral(itemData.offer.guests, window.data.maps.DICTIONARY_GUESTS);
+    popupOfferTime.textContent = 'Заезд после ' + itemData.offer.checkin + ', выезд до ' + itemData.offer.checkout;
+    renderFeaturesInPopup(itemData);
+    popupOfferDescription.textContent = itemData.offer.description;
+    renderPhotosInPopup(itemData);
+    popupOfferAvatar.src = itemData.author.avatar;
+
+    window.util.elems.mapElement.appendChild(popupOfferElement);
+    window.util.elems.mapElement.insertBefore(popupOfferElement, mapFilters);
+  };
+
+  /**
+   * Закртыие карточки
+   */
+  var closeCard = function () {
+    var pinPopup = document.querySelector('.map__card');
+    if (window.util.elems.mapElement.contains(pinPopup)) {
+      window.util.elems.mapElement.removeChild(pinPopup);
+    }
+  };
+
+  /**
+   * Открытие карточки
+   * @param {Event} evt
+   */
+  var openCard = function (evt) {
+    var currentPin = evt.target.closest('.map__pin:not(.map__pin--main)');
+    if (currentPin) {
+      var currentId = currentPin.dataset.id;
+      var filtered = window.data.offerDataArray.filter(function (item) {
+        return item.data.dataId === currentId;
+      });
+      showModalOffer(filtered[0]);
+    }
+  };
+
+  /**
+   * @description Открытие попапа с информацией об объявлении при клике на пин (при помощи делегирования)
+   */
+  window.util.elems.mapPinsContainer.addEventListener('click', function (evt) {
+    closeCard();
+    openCard(evt);
+  });
+
+  /**
+   * @description Открытие попапа с информацией об объявлении при нажатии Enter с фокусом на пине (при помощи делегирования)
+   */
+  window.util.elems.mapPinsContainer.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === window.util.keycode.ENTER_KEYCODE) {
+      openCard(evt);
+    }
+  });
+
+  /**
+   * @description Зыкрытие попапа с информацией об объявлении при нажатии ECS
+   */
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === window.util.keycode.ESC_KEYCODE) {
+      closeCard();
+    }
+  });
+
+  /**
+   * @description Зыкрытие попапа с информацией об объявлении при клике на крестик (при помощи делегирования)
+   */
+  document.addEventListener('click', function (evt) {
+    if (evt.target.matches('.popup__close')) {
+      closeCard();
+    }
+  });
+
+})();
