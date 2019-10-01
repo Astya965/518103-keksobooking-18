@@ -39,7 +39,7 @@
       adFormRoomsInput.setCustomValidity('Только не для гостей');
     } else if (adFormCapacityInput.value === '0' && adFormRoomsInput.value !== '100') {
       adFormCapacityInput.setCustomValidity('Для выбора данной опции необходимо 100 комнат');
-    } else if (adFormRoomsInput.value < adFormCapacityInput.value && adFormCapacityInput.value !== 0) {
+    } else if (adFormRoomsInput.value < adFormCapacityInput.value && adFormCapacityInput.value !== '0') {
       adFormRoomsInput.setCustomValidity('Количество людей больше, чем мест. Выберете большее количество комнат');
       adFormCapacityInput.setCustomValidity('Количество людей больше, чем мест. Выберете большее количество комнат');
     } else {
@@ -110,6 +110,14 @@
   });
 
   /**
+   * @description При выборе количества мест в форме создания объявления включается
+   * проверка соответствия количества мест количеству комнату и отключаются лишние опции при выборе количества мест
+   */
+  adFormCapacityInput.addEventListener('change', function () {
+    checkRoomsAndCapacityValidity();
+  });
+
+  /**
    * @description При выборе заголовка в форме создания объявления включается
    * проверка соответствия на заполнение формы и длину названия
    */
@@ -149,9 +157,6 @@
   });
 
   window.form = {
-    elems: {
-      adFormAdressInput: adFormAdressInput
-    },
     functions: {
       setPinCoordinates: setPinCoordinates,
       setOptionsForRooms: setOptionsForRooms,

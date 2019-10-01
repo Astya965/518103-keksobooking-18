@@ -10,7 +10,7 @@
   /**
    * @description Показывает карту
    */
-  var showMap = function () {
+  var activateMap = function () {
     window.util.elems.mapElement.classList.remove('map--faded');
   };
 
@@ -55,7 +55,7 @@
     window.form.functions.setPinCoordinates(false);
     window.form.functions.setOptionsForRooms();
     window.form.functions.setPriceMinValue();
-    showMap();
+    activateMap();
     showOffersPins();
     document.removeEventListener('DOMContentLoaded', deactivatePage);
   };
