@@ -18,12 +18,12 @@
   var setPinCoordinates = function (isStartingPosition) {
     var pinX = window.util.elems.pinButton.style.left.slice(0, -2);
     var pinY = window.util.elems.pinButton.style.top.slice(0, -2);
-    pinX = Math.round(+pinX + window.data.const.ADJUSTMENT_X);
+    pinX = Math.round(+pinX + window.data.const.ADJUSTMENT_MAIN_X);
 
     if (isStartingPosition) {
-      pinY = Math.round(+pinY + (window.data.const.ADJUSTMENT_MAIN_Y / 2));
+      pinY = Math.round(+pinY + (window.data.const.ADJUSTMENT_MAIN_IMG_Y / 2));
     } else {
-      pinY = Math.round(+pinY + window.data.const.ADJUSTMENT_Y);
+      pinY = Math.round(+pinY + window.data.const.ADJUSTMENT_MAIN_Y);
     }
 
     var pinCoordinates = pinX + ', ' + pinY;
