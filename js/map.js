@@ -21,7 +21,8 @@
   var showOffersPins = function (data) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < data.length; i++) {
-      fragment.appendChild(window.pin.renderOffer(data[i]));
+      var offer = window.pin.renderOffer(data[i]);
+      fragment.appendChild(offer);
     }
 
     window.util.elems.mapPinsContainer.appendChild(fragment);

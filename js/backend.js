@@ -8,7 +8,6 @@
   /**
    * Обращение к серверу и обработка возможных ошибок
    * @param {Function} onLoad - Вызов функции при успешном обращении к серверу
-   * @param {Function} onError - Вызов функции при ошибке
    * @return {Object} - XMLHttpRequest-объект
    */
   var initXHR = function (onLoad) {
@@ -29,7 +28,6 @@
   /**
    * Загрузка данных с сервера
    * @param {Function} onLoad - Вызов функции при успешном обращении к серверу
-   * @param {Function} onError - Вызов функции при ошибке
    */
   var load = function (onLoad) {
     var xhr = initXHR(onLoad);
