@@ -4,6 +4,7 @@
 
   var ESC_KEYCODE = 27;
 
+  var mainElement = document.querySelector('main');
   var mapElement = document.querySelector('.map');
   var adForm = document.querySelector('.ad-form');
   var mapPinsContainer = document.querySelector('.map__pins');
@@ -87,7 +88,7 @@
    */
   var onNotice = function (template) {
     var noticeTimplate = template.cloneNode(true);
-    document.body.appendChild(noticeTimplate);
+    mainElement.appendChild(noticeTimplate);
   };
 
   /**
