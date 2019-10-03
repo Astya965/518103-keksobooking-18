@@ -83,7 +83,7 @@
 
   /**
    * Функция создания уведомления
-   * @param {String} template - Текст уведомления
+   * @param {HTMLElement} template - Template, на сонове гторого генерируется ошибка
    */
   var onNotice = function (template) {
     var noticeTimplate = template.cloneNode(true);
