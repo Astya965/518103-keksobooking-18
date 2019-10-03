@@ -3,12 +3,14 @@
 (function () {
 
   var ESC_KEYCODE = 27;
-  var ENTER_KEYCODE = 13;
 
   var mapElement = document.querySelector('.map');
   var adForm = document.querySelector('.ad-form');
   var mapPinsContainer = document.querySelector('.map__pins');
   var pinButton = mapElement.querySelector('.map__pin--main');
+
+  var errorTemplate = document.querySelector('#error').content;
+  var successTemplate = document.querySelector('#success').content;
 
   /**
    * Выбор случайного числа в заданном промежутке
@@ -79,10 +81,32 @@
     return dictionary.other;
   };
 
+  /**
+   * Функция создания уведомления
+   * @param {String} template - Текст уведомления
+   */
+  var onNotice = function (template) {
+    var noticeTimplate = template.cloneNode(true);
+    document.body.appendChild(noticeTimplate);
+  };
+
+  /**
+   * Создание уведомления об ошибке
+   */
+  var onError = function () {
+    onNotice(errorTemplate);
+  };
+
+  /**
+   * Создание уведомления об успешном выполнении функции
+   */
+  var onSuccess = function () {
+    onNotice(successTemplate);
+  };
+
   window.util = {
     keycode: {
-      ESC_KEYCODE: ESC_KEYCODE,
-      ENTER_KEYCODE: ENTER_KEYCODE
+      ESC_KEYCODE: ESC_KEYCODE
     },
 
     functions: {
@@ -90,7 +114,9 @@
       getRandomElement: getRandomElement,
       mixArray: mixArray,
       toggleEnableElements: toggleEnableElements,
-      connectNounAndNumral: connectNounAndNumral
+      connectNounAndNumral: connectNounAndNumral,
+      onError: onError,
+      onSuccess: onSuccess
     },
 
     elems: {
