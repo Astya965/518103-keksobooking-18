@@ -72,7 +72,7 @@
    */
   var closeCard = function () {
     var pinPopup = document.querySelector('.map__card');
-    if (window.util.elems.mapElement.contains(pinPopup)) {
+    if ((window.util.elems.mapElement.contains(pinPopup)) && (document.activeElement !== window.util.elems.pinButton)) {
       window.util.elems.mapElement.removeChild(pinPopup);
     }
   };
