@@ -8,9 +8,10 @@
   /**
    * Обращение к серверу и обработка возможных ошибок
    * @param {Function} onLoad - Вызов функции при успешном обращении к серверу
+   * @param {Function} onError - Вызов функции при ошибке
    * @return {Object} - XMLHttpRequest-объект
    */
-  var initXHR = function (onLoad) {
+  var initXHR = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -18,7 +19,7 @@
       if (xhr.status === STATUS_SUCCESS) {
         onLoad(xhr.response);
       } else {
-        window.util.functions.onError();
+        onError();
       }
     });
 
@@ -28,9 +29,10 @@
   /**
    * Загрузка данных с сервера
    * @param {Function} onLoad - Вызов функции при успешном обращении к серверу
+   * @param {Function} onError - Вызов функции при ошибке
    */
-  var load = function (onLoad) {
-    var xhr = initXHR(onLoad);
+  var load = function (onLoad, onError) {
+    var xhr = initXHR(onLoad, onError);
     xhr.open('GET', DATA_URL);
     xhr.send();
   };
@@ -41,8 +43,8 @@
    * @param {Function} onLoad - Вызов функции при успешном обращении к серверу
    * @param {Function} onError - Вызов функции при ошибке
    */
-  var save = function (data, onLoad) {
-    var xhr = initXHR(onLoad);
+  var save = function (data, onLoad, onError) {
+    var xhr = initXHR(onLoad, onError);
     xhr.open('POST', URL);
     xhr.send(data);
   };

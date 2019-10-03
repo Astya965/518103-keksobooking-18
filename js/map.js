@@ -34,7 +34,7 @@
   var offersPinsLoad = function () {
     window.backend.load(function (data) {
       showOffersPins(data);
-    });
+    }, window.util.functions.onError);
   };
 
   /**
