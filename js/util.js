@@ -10,8 +10,8 @@
   var mapPinsContainer = document.querySelector('.map__pins');
   var pinButton = mapElement.querySelector('.map__pin--main');
 
-  var errorTemplate = document.querySelector('#error').content;
-  var successTemplate = document.querySelector('#success').content;
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var successTemplate = document.querySelector('#success').content.querySelector('.success');
 
   /**
    * Выбор случайного числа в заданном промежутке
@@ -87,8 +87,8 @@
    * @param {HTMLElement} template - Template, на сонове гторого генерируется ошибка
    */
   var onNotice = function (template) {
-    var noticeTimplate = template.cloneNode(true);
-    mainElement.appendChild(noticeTimplate);
+    var noticeElement = template.cloneNode(true);
+    mainElement.appendChild(noticeElement);
   };
 
   /**

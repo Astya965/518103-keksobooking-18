@@ -19,9 +19,19 @@
       if (xhr.status === STATUS_SUCCESS) {
         onLoad(xhr.response);
       } else {
-        onError();
+        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
+
+    xhr.addEventListener('error', function () {
+      onError('Произошла ошибка соединения');
+    });
+
+    xhr.addEventListener('timeout', function () {
+      onError('Прeвышено время ожидания ответа от сайта. Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+    });
+
+    xhr.timeout = 15000;
 
     return xhr;
   };

@@ -32,9 +32,7 @@
    * @description Отображение пинов объявлений на карте с использование данных с сервера
    */
   var offersPinsLoad = function () {
-    window.backend.load(function (data) {
-      showOffersPins(data);
-    }, window.util.functions.onError);
+    window.backend.load(showOffersPins, window.util.functions.onError);
   };
 
   /**
