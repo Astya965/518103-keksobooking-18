@@ -41,13 +41,9 @@
      */
     var renderPhotosInPopup = function () {
       for (var j = 0; j < itemData.offer.photos.length; j++) {
-        if (j === 0) {
-          popupOfferPhotosElement.src = itemData.offer.photos[j];
-        } else {
-          var clonedPhotosElement = popupOfferPhotosElement.cloneNode(true);
-          clonedPhotosElement.src = itemData.offer.photos[j];
-          popupOfferPhotos.appendChild(clonedPhotosElement);
-        }
+        var clonedPhotosElement = popupOfferPhotosElement.cloneNode(true);
+        clonedPhotosElement.src = itemData.offer.photos[j];
+        popupOfferPhotos.appendChild(clonedPhotosElement);
       }
     };
 
@@ -60,6 +56,7 @@
     popupOfferTime.textContent = 'Заезд после ' + itemData.offer.checkin + ', выезд до ' + itemData.offer.checkout;
     renderFeaturesInPopup(itemData);
     popupOfferDescription.textContent = itemData.offer.description;
+    popupOfferPhotos.innerHTML = '';
     renderPhotosInPopup(itemData);
     popupOfferAvatar.src = itemData.author.avatar;
 
@@ -78,38 +75,6 @@
   };
 
   /**
-   * Открытие карточки
-   * @param {Event} evt
-   */
-  var openCard = function (evt) {
-    var currentPin = evt.target.closest('.map__pin:not(.map__pin--main)');
-    if (currentPin) {
-      var currentId = currentPin.dataset.id;
-      var filtered = window.data.offerDataArray.filter(function (item) {
-        return item.data.dataId === currentId;
-      });
-      showModalOffer(filtered[0]);
-    }
-  };
-
-  /**
-   * @description Открытие попапа с информацией об объявлении при клике на пин (при помощи делегирования)
-   */
-  window.util.elems.mapPinsContainer.addEventListener('click', function (evt) {
-    closeCard();
-    openCard(evt);
-  });
-
-  /**
-   * @description Открытие попапа с информацией об объявлении при нажатии Enter с фокусом на пине (при помощи делегирования)
-   */
-  window.util.elems.mapPinsContainer.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.keycode.ENTER_KEYCODE) {
-      openCard(evt);
-    }
-  });
-
-  /**
    * @description Зыкрытие попапа с информацией об объявлении при нажатии ECS
    */
   document.addEventListener('keydown', function (evt) {
@@ -126,5 +91,9 @@
       closeCard();
     }
   });
+
+  window.card = {
+    showModalOffer: showModalOffer
+  };
 
 })();

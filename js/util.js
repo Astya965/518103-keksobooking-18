@@ -3,12 +3,15 @@
 (function () {
 
   var ESC_KEYCODE = 27;
-  var ENTER_KEYCODE = 13;
 
+  var mainElement = document.querySelector('main');
   var mapElement = document.querySelector('.map');
   var adForm = document.querySelector('.ad-form');
   var mapPinsContainer = document.querySelector('.map__pins');
   var pinButton = mapElement.querySelector('.map__pin--main');
+
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+  var successTemplate = document.querySelector('#success').content.querySelector('.success');
 
   /**
    * Выбор случайного числа в заданном промежутке
@@ -79,10 +82,32 @@
     return dictionary.other;
   };
 
+  /**
+   * Функция создания уведомления
+   * @param {HTMLElement} template - Template, на сонове гторого генерируется ошибка
+   */
+  var onNotice = function (template) {
+    var noticeElement = template.cloneNode(true);
+    mainElement.appendChild(noticeElement);
+  };
+
+  /**
+   * Создание уведомления об ошибке
+   */
+  var onError = function () {
+    onNotice(errorTemplate);
+  };
+
+  /**
+   * Создание уведомления об успешном выполнении функции
+   */
+  var onSuccess = function () {
+    onNotice(successTemplate);
+  };
+
   window.util = {
     keycode: {
-      ESC_KEYCODE: ESC_KEYCODE,
-      ENTER_KEYCODE: ENTER_KEYCODE
+      ESC_KEYCODE: ESC_KEYCODE
     },
 
     functions: {
@@ -90,7 +115,9 @@
       getRandomElement: getRandomElement,
       mixArray: mixArray,
       toggleEnableElements: toggleEnableElements,
-      connectNounAndNumral: connectNounAndNumral
+      connectNounAndNumral: connectNounAndNumral,
+      onError: onError,
+      onSuccess: onSuccess
     },
 
     elems: {

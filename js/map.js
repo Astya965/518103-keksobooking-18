@@ -16,16 +16,23 @@
 
   /**
    * @description Показывает пин объявления на карте
+   * @param {Array} data - Данные объявлений
    */
-  var showOffersPins = function () {
+  var showOffersPins = function (data) {
     var fragment = document.createDocumentFragment();
-
-    for (var i = 0; i < window.data.offerDataArray.length; i++) {
-      var offerData = window.data.offerDataArray[i];
-      fragment.appendChild(window.pin.renderOffer(offerData));
+    for (var i = 0; i < data.length; i++) {
+      var offer = window.pin.renderOffer(data[i]);
+      fragment.appendChild(offer);
     }
 
     window.util.elems.mapPinsContainer.appendChild(fragment);
+  };
+
+  /**
+   * @description Отображение пинов объявлений на карте с использование данных с сервера
+   */
+  var offersPinsLoad = function () {
+    window.backend.load(showOffersPins, window.util.functions.onError);
   };
 
   /**
@@ -56,7 +63,7 @@
     window.form.functions.setOptionsForRooms();
     window.form.functions.setPriceMinValue();
     activateMap();
-    showOffersPins();
+    offersPinsLoad();
     document.removeEventListener('DOMContentLoaded', deactivatePage);
   };
 

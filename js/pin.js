@@ -16,13 +16,19 @@
     pinElement.style.top = itemData.location.y + 'px';
     pinElementImg.src = itemData.author.avatar;
     pinElementImg.alt = itemData.offer.description;
-    pinElement.setAttribute('data-id', itemData.data.dataId);
+
+    /**
+    * Событие открытия окна объявления при клике или нажатие Enter на пин
+    */
+    pinElement.addEventListener('click', function () {
+      var pinPopup = document.querySelector('.map__card');
+      if (window.util.elems.mapElement.contains(pinPopup)) {
+        window.util.elems.mapElement.removeChild(pinPopup);
+      }
+      window.card.showModalOffer(itemData);
+    });
 
     return pinElement;
-  };
-
-  window.pin = {
-    renderOffer: renderOffer
   };
 
   /**
@@ -79,5 +85,9 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  window.pin = {
+    renderOffer: renderOffer
+  };
 
 })();
