@@ -2,7 +2,7 @@
 
 (function () {
   var URL = 'https://js.dump.academy/keksobooking';
-  var DATA_URL = URL + '/data';
+  var DATA_URL = URL + '/dat';
   var STATUS_SUCCESS = 200;
 
   /**

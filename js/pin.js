@@ -32,6 +32,24 @@
   };
 
   /**
+  * @description Установка главного пина на старотвую позицию
+  */
+  var setPinStartPosition = function () {
+    window.util.elems.pinButton.style.left = window.data.const.START_COORDINATES.x + 'px';
+    window.util.elems.pinButton.style.top = window.data.const.START_COORDINATES.y + 'px';
+  };
+
+  /**
+  * @description Удаление пинов похожих объявлений
+  */
+  var removeOffer = function () {
+    var secondaryPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = secondaryPins.length - 1; i >= 0; i--) {
+      window.util.elems.mapPinsContainer.removeChild(secondaryPins[i]);
+    }
+  };
+
+  /**
    * @description При нажатии и удержании появляется возможность перемещать пин, если страница уже активна
    */
   window.util.elems.pinButton.addEventListener('mousedown', function (evt) {
@@ -41,10 +59,10 @@
     };
 
     var onMouseMove = function (moveEvt) {
-      var MAP_MIN_X = window.data.const.MIN_X - window.data.const.ADJUSTMENT_X;
-      var MAP_MAX_X = window.data.const.MAX_X - window.data.const.ADJUSTMENT_X;
-      var MAP_MIN_Y = window.data.const.MIN_Y - window.data.const.ADJUSTMENT_Y;
-      var MAP_MAX_Y = window.data.const.MAX_Y - window.data.const.ADJUSTMENT_Y;
+      var MAP_MIN_X = window.data.const.MIN_X - window.data.const.ADJUSTMENT_MAIN_X;
+      var MAP_MAX_X = window.data.const.MAX_X - window.data.const.ADJUSTMENT_MAIN_X;
+      var MAP_MIN_Y = window.data.const.MIN_Y - window.data.const.ADJUSTMENT_MAIN_Y;
+      var MAP_MAX_Y = window.data.const.MAX_Y - window.data.const.ADJUSTMENT_MAIN_Y;
 
       var shift = {
         x: startCoords.x - moveEvt.clientX,
@@ -87,7 +105,9 @@
   });
 
   window.pin = {
-    renderOffer: renderOffer
+    renderOffer: renderOffer,
+    removeOffer: removeOffer,
+    setPinStartPosition: setPinStartPosition
   };
 
 })();

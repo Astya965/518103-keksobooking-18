@@ -43,6 +43,9 @@
     window.util.functions.toggleEnableElements(mapFiltersFormFieldsets, true);
     window.util.functions.toggleEnableElements(adFormFieldsets, true);
     window.util.functions.toggleEnableElements(adFormSelects, true);
+    if (!window.util.elems.adForm.classList.contains('ad-form--disabled')) {
+      window.util.elems.adForm.classList.add('ad-form--disabled');
+    }
   };
 
   /**
@@ -90,5 +93,9 @@
       activatePage();
     }
   });
+
+  window.map = {
+    deactivatePage: deactivatePage
+  };
 
 })();
