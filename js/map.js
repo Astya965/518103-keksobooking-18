@@ -95,7 +95,9 @@
   });
 
   window.map = {
-    deactivatePage: deactivatePage
+    activatePage: activatePage,
+    deactivatePage: deactivatePage,
+    showOffersPins: showOffersPins
   };
 
 })();
