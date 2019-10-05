@@ -65,11 +65,11 @@
   };
 
   /**
-   * Закртыие карточки
-   */
+  * @description Закртыие карточки
+  */
   var closeCard = function () {
     var pinPopup = document.querySelector('.map__card');
-    if ((window.util.elems.mapElement.contains(pinPopup)) && (document.activeElement !== window.util.elems.pinButton)) {
+    if (pinPopup !== null) {
       window.util.elems.mapElement.removeChild(pinPopup);
     }
   };
@@ -93,7 +93,8 @@
   });
 
   window.card = {
-    showModalOffer: showModalOffer
+    showModalOffer: showModalOffer,
+    closeCard: closeCard
   };
 
 })();

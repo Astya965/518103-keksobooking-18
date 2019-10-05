@@ -85,17 +85,55 @@
   /**
    * Функция создания уведомления
    * @param {HTMLElement} template - Template, на сонове гторого генерируется ошибка
+   * @param {String} noticeMessage - Сообщение уведомления (необязательное значение)
    */
-  var onNotice = function (template) {
+  var onNotice = function (template, noticeMessage) {
     var noticeElement = template.cloneNode(true);
-    mainElement.appendChild(noticeElement);
+    var noticeMessageArea = noticeElement.querySelector('p');
+
+    var onEscPress = function (evt) {
+      if ((evt.keyCode === ESC_KEYCODE) && (mainElement.contains(noticeElement))) {
+        window.form.functions.deactivateForm();
+        mainElement.removeChild(noticeElement);
+      }
+      document.removeEventListener('keydown', onEscPress);
+    };
+    document.addEventListener('keydown', onEscPress);
+
+    noticeElement.addEventListener('click', function (evt) {
+      if ((evt.target !== noticeMessageArea) && (mainElement.contains(noticeElement))) {
+        window.form.functions.deactivateForm();
+        mainElement.removeChild(noticeElement);
+        document.removeEventListener('keydown', onEscPress);
+      }
+    });
+
+    if (template === errorTemplate) {
+      var errorMessage = noticeElement.querySelector('.error__message');
+      var errorButton = noticeElement.querySelector('.error__button');
+
+      errorMessage.textContent = noticeMessage;
+
+      errorButton.addEventListener('click', function () {
+        window.backend.load(function (data) {
+          window.map.activatePage();
+          window.map.showOffersPins(data);
+          document.removeEventListener('keydown', onEscPress);
+        }, window.util.functions.onError);
+      });
+    }
+
+    if (!mainElement.contains(noticeElement)) {
+      mainElement.appendChild(noticeElement);
+    }
   };
 
   /**
    * Создание уведомления об ошибке
+   * @param {String} errorMessage - Сообщение ошибки
    */
-  var onError = function () {
-    onNotice(errorTemplate);
+  var onError = function (errorMessage) {
+    onNotice(errorTemplate, errorMessage);
   };
 
   /**

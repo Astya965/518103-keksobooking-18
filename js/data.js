@@ -8,14 +8,19 @@
     'house': 'Дом',
     'palace': 'Дворец'
   };
+  var START_COORDINATES = {
+    x: 570,
+    y: 375
+  };
   var MIN_X = 0;
   var MAX_X = 1200;
   var MIN_Y = 130;
   var MAX_Y = 630;
-  var ADJUSTMENT_MAIN_X = 65 / 2;
-  var ADJUSTMENT_MAIN_IMG_Y = 65;
-  var ADJUSTMENT_MAIN_TAIL_Y = 16;
-  var ADJUSTMENT_MAIN_Y = ADJUSTMENT_MAIN_IMG_Y + ADJUSTMENT_MAIN_TAIL_Y;
+  var PIN_WIDTH = 65;
+  var PIN_HEIGTH = 65;
+  var PIN_TAIL_HEIGHT = 16;
+  var ADJUSTMENT_MAIN_X = PIN_WIDTH / 2;
+  var ADJUSTMENT_MAIN_Y = PIN_HEIGTH + PIN_TAIL_HEIGHT;
   var DICTIONARY_ROOMS = {
     'one': 'комната',
     'few': 'комнаты',
@@ -40,8 +45,9 @@
     },
 
     const: {
+      START_COORDINATES: START_COORDINATES,
+      PIN_HEIGTH: PIN_HEIGTH,
       ADJUSTMENT_MAIN_X: ADJUSTMENT_MAIN_X,
-      ADJUSTMENT_MAIN_IMG_Y: ADJUSTMENT_MAIN_IMG_Y,
       ADJUSTMENT_MAIN_Y: ADJUSTMENT_MAIN_Y,
       MIN_X: MIN_X,
       MAX_X: MAX_X,

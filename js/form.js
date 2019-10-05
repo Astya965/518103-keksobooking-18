@@ -10,6 +10,8 @@
   var adFormRoomsInput = window.util.elems.adForm.querySelector('#room_number');
   var adFormCapacityInput = window.util.elems.adForm.querySelector('#capacity');
   var adFormCapacityOptions = adFormCapacityInput.querySelectorAll('option');
+  var adFormAccommodationSelected = adFormAccommodationInput.querySelector('option[selected]');
+  var adFormReset = window.util.elems.adForm.querySelector('.ad-form__reset');
 
   /**
    * Передача координат острого конца метки в поле адреса (форма создания объявления)
@@ -21,7 +23,7 @@
     pinX = Math.round(+pinX + window.data.const.ADJUSTMENT_MAIN_X);
 
     if (isStartingPosition) {
-      pinY = Math.round(+pinY + (window.data.const.ADJUSTMENT_MAIN_IMG_Y / 2));
+      pinY = Math.round(+pinY + (window.data.const.PIN_HEIGTH / 2));
     } else {
       pinY = Math.round(+pinY + window.data.const.ADJUSTMENT_MAIN_Y);
     }
@@ -101,6 +103,28 @@
   };
 
   /**
+   * @description Очистить поля ввода у формы и установить изначальные значения min и placehplder поля цены
+   */
+  var resetForm = function () {
+    window.util.elems.adForm.reset();
+    setPriceMinValue();
+  };
+
+  /**
+   * @description Неактивное состояние при отправке или сбросе формы
+   */
+  var deactivateForm = function () {
+    window.map.deactivatePage();
+    resetForm();
+    setOptionsForRooms();
+    window.pin.removeOffer();
+    window.card.closeCard();
+    window.pin.setPinStartPosition();
+    setPinCoordinates(true);
+    window.util.elems.mapElement.classList.add('map--faded');
+  };
+
+  /**
    * @description При выборе количества комнат в форме создания объявления включается
    * проверка соответствия количества мест количеству комнату и отключаются лишние опции при выборе количества мест
    */
@@ -156,11 +180,33 @@
     adFormTimeoutInput.value = adFormTimeinInput.value;
   });
 
+  /**
+   * @description Обработчик события при сбросе значений формы
+   */
+  adFormReset.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    deactivateForm();
+    adFormPriceInput.min = window.data.maps.ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationSelected.value];
+    adFormPriceInput.placeholder = window.data.maps.ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationSelected.value];
+  });
+
+  /**
+   * @description Обработчик события отправки данных формы формы
+   */
+  window.util.elems.adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(window.util.elems.adForm), function () {
+      deactivateForm();
+      window.util.functions.onSuccess();
+    }, window.util.functions.onError);
+  });
+
   window.form = {
     functions: {
       setPinCoordinates: setPinCoordinates,
       setOptionsForRooms: setOptionsForRooms,
-      setPriceMinValue: setPriceMinValue
+      setPriceMinValue: setPriceMinValue,
+      deactivateForm: deactivateForm
     }
   };
 
