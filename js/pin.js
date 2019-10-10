@@ -43,9 +43,9 @@
   * @description Удаление пинов похожих объявлений
   */
   var removeOffer = function () {
-    var secondaryPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = secondaryPins.length - 1; i >= 0; i--) {
-      window.util.elems.mapPinsContainer.removeChild(secondaryPins[i]);
+    var offers = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = offers.length - 1; i >= 0; i--) {
+      window.util.elems.mapPinsContainer.removeChild(offers[i]);
     }
   };
 
