@@ -12,7 +12,6 @@
     } else {
       filteredData = window.defaultData;
     }
-    console.log(filteredData);
     window.map.showOffersPins(filteredData);
   };
 

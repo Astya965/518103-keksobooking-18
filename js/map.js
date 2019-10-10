@@ -6,6 +6,8 @@
   var mapFiltersFormFieldsets = mapFiltersForm.querySelectorAll('fieldset');
   var adFormSelects = window.util.elems.adForm.querySelectorAll('select');
   var adFormFieldsets = window.util.elems.adForm.querySelectorAll('fieldset');
+  var PINS_MAX = 5;
+  var pinCount;
 
   /**
    * @description Показывает карту
@@ -20,7 +22,12 @@
    */
   var showOffersPins = function (data) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < data.length; i++) {
+    if (data.length > PINS_MAX) {
+      pinCount = PINS_MAX;
+    } else {
+      pinCount = data.length;
+    }
+    for (var i = 0; i < pinCount; i++) {
       var offer = window.pin.renderOffer(data[i]);
       fragment.appendChild(offer);
     }
