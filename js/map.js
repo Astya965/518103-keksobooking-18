@@ -6,7 +6,6 @@
   var mapFiltersFormFieldsets = mapFiltersForm.querySelectorAll('fieldset');
   var adFormSelects = window.util.elems.adForm.querySelectorAll('select');
   var adFormFieldsets = window.util.elems.adForm.querySelectorAll('fieldset');
-  var PINS_COUNT = 5;
 
   /**
    * @description Показывает карту
@@ -21,7 +20,7 @@
    */
   var showOffersPins = function (data) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < PINS_COUNT; i++) {
+    for (var i = 0; i < data.length; i++) {
       var offer = window.pin.renderOffer(data[i]);
       fragment.appendChild(offer);
     }
@@ -33,7 +32,10 @@
    * @description Отображение пинов объявлений на карте с использование данных с сервера
    */
   var offersPinsLoad = function () {
-    window.backend.load(showOffersPins, window.util.functions.onError);
+    window.backend.load(function (data) {
+      window.defaultData = data;
+      showOffersPins(data);
+    }, window.util.functions.onError);
   };
 
   /**
