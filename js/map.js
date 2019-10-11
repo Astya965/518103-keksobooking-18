@@ -35,7 +35,7 @@
   var offersPinsLoad = function () {
     window.backend.load(function (data) {
       window.defaultData = data;
-      showOffersPins(window.filters.filterAll(window.defaultData));
+      showOffersPins(window.filters.filterAll());
     }, window.util.functions.onError);
   };
 

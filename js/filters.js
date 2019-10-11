@@ -37,7 +37,7 @@
   var onHousingFilter = function () {
     window.card.closeCard();
     window.pin.removeOffer();
-    window.map.showOffersPins(filterAll(window.defaultData));
+    window.map.showOffersPins(filterAll());
   };
 
   /**
