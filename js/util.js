@@ -115,11 +115,9 @@
       errorMessage.textContent = noticeMessage;
 
       errorButton.addEventListener('click', function () {
-        window.backend.load(function (data) {
-          window.map.activatePage();
-          window.map.showOffersPins(data);
-          document.removeEventListener('keydown', onEscPress);
-        }, window.util.functions.onError);
+        window.form.functions.deactivateForm();
+        mainElement.removeChild(noticeElement);
+        document.removeEventListener('keydown', onEscPress);
       });
     }
 
