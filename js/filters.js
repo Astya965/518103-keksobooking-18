@@ -128,52 +128,52 @@
   /**
   * @description Событие изменения значения фильтра типа жилья
   */
-  housingType.addEventListener('change', onHousingFilter);
+  housingType.addEventListener('change', window.debounce(onHousingFilter));
 
   /**
   * @description Событие изменения значения фильтра цены
   */
-  housingPrice.addEventListener('change', onHousingFilter);
+  housingPrice.addEventListener('change', window.debounce(onHousingFilter));
 
   /**
   * @description Событие изменения значения фильтра количества комнат
   */
-  housingRooms.addEventListener('change', onHousingFilter);
+  housingRooms.addEventListener('change', window.debounce(onHousingFilter));
 
   /**
   * @description Событие изменения значения фильтра количества гостей
   */
-  housingGuests.addEventListener('change', onHousingFilter);
+  housingGuests.addEventListener('change', window.debounce(onHousingFilter));
 
   /**
   * @description Событие изменения значения фильтра наличия WiFI
   */
-  housingWiFi.addEventListener('change', onHousingFilter);
+  housingWiFi.addEventListener('change', window.debounce(onHousingFilter));
 
   /**
   * @description Событие изменения значения фильтра наличия посудомойки
   */
-  housingDishwasher.addEventListener('change', onHousingFilter);
+  housingDishwasher.addEventListener('change', window.debounce(onHousingFilter));
 
   /**
   * @description Событие изменения значения фильтра наличия парковки
   */
-  housingParking.addEventListener('change', onHousingFilter);
+  housingParking.addEventListener('change', window.debounce(onHousingFilter));
 
   /**
   * @description Событие изменения значения фильтра наличия стиральной машины
   */
-  housingWasher.addEventListener('change', onHousingFilter);
+  housingWasher.addEventListener('change', window.debounce(onHousingFilter));
 
   /**
   * @description Событие изменения значения фильтра наличия лифта
   */
-  housingElevator.addEventListener('change', onHousingFilter);
+  housingElevator.addEventListener('change', window.debounce(onHousingFilter));
 
   /**
   * @description Событие изменения значения фильтра наличия кондиционера
   */
-  housingConditioner.addEventListener('change', onHousingFilter);
+  housingConditioner.addEventListener('change', window.debounce(onHousingFilter));
 
   window.filters = {
     filterAll: filterAll
