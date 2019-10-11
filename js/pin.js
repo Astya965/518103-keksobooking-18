@@ -18,7 +18,7 @@
     pinElementImg.alt = itemData.offer.description;
 
     /**
-    * Событие открытия окна объявления при клике или нажатие Enter на пин
+    * @description Событие открытия окна объявления при клике или нажатие Enter на пин
     */
     pinElement.addEventListener('click', function () {
       var pinPopup = document.querySelector('.map__card');
