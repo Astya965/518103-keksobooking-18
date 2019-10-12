@@ -1,11 +1,12 @@
 'use strict';
 
 (function () {
-  var housingType = document.querySelector('#housing-type');
-  var housingPrice = document.querySelector('#housing-price');
-  var housingRooms = document.querySelector('#housing-rooms');
-  var housingGuests = document.querySelector('#housing-guests');
-  var housingFeatures = document.querySelector('#housing-features');
+  var mapFilter = document.querySelector('.map__filters');
+  var housingType = mapFilter.querySelector('#housing-type');
+  var housingPrice = mapFilter.querySelector('#housing-price');
+  var housingRooms = mapFilter.querySelector('#housing-rooms');
+  var housingGuests = mapFilter.querySelector('#housing-guests');
+  var housingFeatures = mapFilter.querySelector('#housing-features');
   var housingWiFi = housingFeatures.querySelector('#filter-wifi');
   var housingDishwasher = housingFeatures.querySelector('#filter-dishwasher');
   var housingParking = housingFeatures.querySelector('#filter-parking');
@@ -18,7 +19,7 @@
   * @description Проверка для каждого элемента массива на основе значения фильтра типа жилья
   * @param {Object} item - Элемент массива (объект) для которого выполняется проверка
   * @return {Boolean} - Автоматическое прохождение проверки
-  * @return {Function} - Прохождение проверки на соответствие типа жилья значению фильтра
+  * @return {Boolean} - Прохождение проверки на соответствие типа жилья значению фильтра
   */
   var getHousingType = function (item) {
     if (housingType.value === 'any') {
@@ -32,7 +33,7 @@
   * @description Проверка для каждого элемента массива на основе значения фильтра цены
   * @param {Object} item - Элемент массива (объект) для которого выполняется проверка
   * @return {Boolean} - Автоматическое прохождение проверки
-  * @return {Function} - Прохождение проверки на соответствие цены значению фильтра
+  * @return {Boolean} - Прохождение проверки на соответствие цены значению фильтра
   */
   var getHousingPrice = function (item) {
     if (housingPrice.value === 'any') {
@@ -50,7 +51,7 @@
   * @description Проверка для каждого элемента массива на основе значения фильтра количества комнат
   * @param {Object} item - Элемент массива (объект) для которого выполняется проверка
   * @return {Boolean} - Автоматическое прохождение проверки
-  * @return {Function} - Прохождение проверки на соответствие количества комнат значению фильтра
+  * @return {Boolean} - Прохождение проверки на соответствие количества комнат значению фильтра
   */
   var getHousingRooms = function (item) {
     if (housingRooms.value === 'any') {
@@ -64,15 +65,15 @@
   * @description Проверка для каждого элемента массива на основе значения фильтра количества гостей
   * @param {Object} item - Элемент массива (объект) для которого выполняется проверка
   * @return {Boolean} - Автоматическое прохождение проверки
-  * @return {Function} - Прохождение проверки на соответствие количества гостей значению фильтра
+  * @return {Boolean} - Прохождение проверки на соответствие количества гостей значению фильтра
   */
   var getHousingGuests = function (item) {
     if (housingGuests.value === 'any') {
       return true;
     } else {
       return (
-        ((item.offer.guests !== 0) && (item.offer.guests >= parseInt(housingGuests.value, 10))) ||
-        ((item.offer.guests === 0) && (parseInt(housingGuests.value, 10) === 0))
+        ((parseInt(housingGuests.value, 10) !== 0) && (item.offer.guests >= parseInt(housingGuests.value, 10))) ||
+        ((parseInt(housingGuests.value, 10) === 0) && (item.offer.guests === 0))
       );
     }
   };
@@ -82,13 +83,13 @@
   * @param {Object} item - Элемент массива (объект) для которого выполняется проверка
   * @param {HTMLElement} feature - Фильтр для, которого выполняется проверка
   * @return {Boolean} - Автоматическое прохождение проверки
-  * @return {Function} - Прохождение проверки на соответствие наличия удобства значению фильтра
+  * @return {Boolean} - Прохождение проверки на соответствие наличия удобства значению фильтра
   */
   var getHousingFeatures = function (item, feature) {
     if (feature.checked === false) {
       return true;
     } else {
-      return item.offer.features.includes(feature.value);
+      return (item.offer.features.indexOf(feature.value) !== -1);
     }
   };
 
@@ -110,7 +111,7 @@
         getHousingFeatures(item, housingParking) &&
         getHousingFeatures(item, housingWasher) &&
         getHousingFeatures(item, housingElevator) &&
-        getHousingFeatures(item, housingWasher)
+        getHousingFeatures(item, housingConditioner)
       );
     })
     .slice(0, PINS_COUNT);
@@ -128,52 +129,7 @@
   /**
   * @description Событие изменения значения фильтра типа жилья
   */
-  housingType.addEventListener('change', window.debounce(onHousingFilter));
-
-  /**
-  * @description Событие изменения значения фильтра цены
-  */
-  housingPrice.addEventListener('change', window.debounce(onHousingFilter));
-
-  /**
-  * @description Событие изменения значения фильтра количества комнат
-  */
-  housingRooms.addEventListener('change', window.debounce(onHousingFilter));
-
-  /**
-  * @description Событие изменения значения фильтра количества гостей
-  */
-  housingGuests.addEventListener('change', window.debounce(onHousingFilter));
-
-  /**
-  * @description Событие изменения значения фильтра наличия WiFI
-  */
-  housingWiFi.addEventListener('change', window.debounce(onHousingFilter));
-
-  /**
-  * @description Событие изменения значения фильтра наличия посудомойки
-  */
-  housingDishwasher.addEventListener('change', window.debounce(onHousingFilter));
-
-  /**
-  * @description Событие изменения значения фильтра наличия парковки
-  */
-  housingParking.addEventListener('change', window.debounce(onHousingFilter));
-
-  /**
-  * @description Событие изменения значения фильтра наличия стиральной машины
-  */
-  housingWasher.addEventListener('change', window.debounce(onHousingFilter));
-
-  /**
-  * @description Событие изменения значения фильтра наличия лифта
-  */
-  housingElevator.addEventListener('change', window.debounce(onHousingFilter));
-
-  /**
-  * @description Событие изменения значения фильтра наличия кондиционера
-  */
-  housingConditioner.addEventListener('change', window.debounce(onHousingFilter));
+  mapFilter.addEventListener('change', window.debounce(onHousingFilter));
 
   window.filters = {
     filterAll: filterAll
