@@ -120,16 +120,16 @@
   /**
   * @description Обработчик, закрывает объявления, убирает пины и создает новые на основе требований фильтра
   */
-  var onHousingFilter = function () {
+  var onHousingFilter = window.debounce(function () {
     window.card.closeCard();
     window.pin.removeOffer();
     window.map.showOffersPins(filterAll());
-  };
+  });
 
   /**
   * @description Событие изменения значения фильтра типа жилья
   */
-  mapFilter.addEventListener('change', window.debounce(onHousingFilter));
+  mapFilter.addEventListener('change', onHousingFilter);
 
   window.filters = {
     filterAll: filterAll
