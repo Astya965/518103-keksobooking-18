@@ -128,7 +128,10 @@
 
   window.filters = {
     filterAll: filterAll,
-    mapFilter: mapFilter
+
+    elems: {
+      mapFilter: mapFilter
+    }
   };
 
 })();

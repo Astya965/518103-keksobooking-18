@@ -2,6 +2,10 @@
 
 (function () {
   var offersTimplate = document.querySelector('#pin').content.querySelector('.map__pin');
+  var Coordinates = function (x, y) {
+    this.x = x;
+    this.y = y;
+  };
 
   /**
   * Генерация пина похожeго объявления
@@ -53,10 +57,7 @@
    * @description При нажатии и удержании появляется возможность перемещать пин, если страница уже активна
    */
   window.util.elems.pinButton.addEventListener('mousedown', function (evt) {
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
+    var startCoordinates = new Coordinates(evt.clientX, evt.clientY);
 
     var onMouseMove = function (moveEvt) {
       var MAP_MIN_X = window.data.const.MIN_X - window.data.const.ADJUSTMENT_MAIN_X;
@@ -64,20 +65,14 @@
       var MAP_MIN_Y = window.data.const.MIN_Y - window.data.const.ADJUSTMENT_MAIN_Y;
       var MAP_MAX_Y = window.data.const.MAX_Y - window.data.const.ADJUSTMENT_MAIN_Y;
 
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
-      };
+      var shift = new Coordinates(startCoordinates.x - moveEvt.clientX, startCoordinates.y - moveEvt.clientY);
 
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
+      startCoordinates = new Coordinates(moveEvt.clientX, moveEvt.clientY);
 
-      var offsetCoords = {
-        x: window.util.elems.pinButton.offsetLeft - shift.x,
-        y: window.util.elems.pinButton.offsetTop - shift.y
-      };
+      var offsetCoords = new Coordinates(
+          window.util.elems.pinButton.offsetLeft - shift.x,
+          window.util.elems.pinButton.offsetTop - shift.y
+      );
 
       if (offsetCoords.x < MAP_MIN_X) {
         offsetCoords.x = MAP_MIN_X;

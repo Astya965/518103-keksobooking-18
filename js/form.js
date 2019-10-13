@@ -130,7 +130,7 @@
    */
   var resetForm = function () {
     window.util.elems.adForm.reset();
-    window.filters.mapFilter.reset();
+    window.filters.elems.mapFilter.reset();
     setPriceMinValue();
     resetPictures();
   };
