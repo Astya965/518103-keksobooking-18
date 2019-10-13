@@ -106,18 +106,23 @@
     adFormPriceInput.placeholder = window.data.maps.ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationInput.value];
   };
 
+  var resetPictures = function () {
+    adFormAvatarPreview.src = 'img/muffin-grey.svg';
+    window.fileInput.removePicture(adFormImgPreview);
+  };
+
   /**
    * @description Событие добавления аватарки пользователя в форму объявления
    */
   adFormAvatarInput.addEventListener('change', function () {
-    window.addPicture(adFormAvatarInput, true, adFormAvatarPreview);
+    window.fileInput.addPicture(adFormAvatarInput, true, adFormAvatarPreview);
   });
 
   /**
    * @description Событие добавления изображения жилья в форму объявления
    */
   adFormImgInput.addEventListener('change', function () {
-    window.addPicture(adFormImgInput, false, adFormImgPreview);
+    window.fileInput.addPicture(adFormImgInput, false, adFormImgPreview);
   });
 
   /**
@@ -126,6 +131,7 @@
   var resetForm = function () {
     window.util.elems.adForm.reset();
     setPriceMinValue();
+    resetPictures();
   };
 
   /**
