@@ -121,6 +121,10 @@
     window.map.showOffersPins(filterAll());
   });
 
+  var resetFilters = function () {
+    mapFilter.reset();
+  };
+
   /**
   * @description Событие изменения значения фильтра типа жилья
   */
@@ -128,10 +132,7 @@
 
   window.filters = {
     filterAll: filterAll,
-
-    elems: {
-      mapFilter: mapFilter
-    }
+    resetFilters: resetFilters
   };
 
 })();

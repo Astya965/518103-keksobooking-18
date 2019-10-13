@@ -16,6 +16,7 @@
   var adFormImgPreview = window.util.elems.adForm.querySelector('.ad-form__photo');
   var adFormAccommodationSelected = adFormAccommodationInput.querySelector('option[selected]');
   var adFormReset = window.util.elems.adForm.querySelector('.ad-form__reset');
+  var PREVIEW_IMG = 'img/muffin-grey.svg';
 
   /**
    * Передача координат острого конца метки в поле адреса (форма создания объявления)
@@ -107,7 +108,7 @@
   };
 
   var resetPictures = function () {
-    adFormAvatarPreview.src = 'img/muffin-grey.svg';
+    adFormAvatarPreview.src = PREVIEW_IMG;
     window.fileInput.removePicture(adFormImgPreview);
   };
 
@@ -130,7 +131,7 @@
    */
   var resetForm = function () {
     window.util.elems.adForm.reset();
-    window.filters.elems.mapFilter.reset();
+    window.filters.resetFilters();
     setPriceMinValue();
     resetPictures();
   };
