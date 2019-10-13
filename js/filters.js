@@ -127,7 +127,8 @@
   mapFilter.addEventListener('change', onHousingFilter);
 
   window.filters = {
-    filterAll: filterAll
+    filterAll: filterAll,
+    mapFilter: mapFilter
   };
 
 })();

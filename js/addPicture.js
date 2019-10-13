@@ -36,7 +36,7 @@
             newPreview.src = reader.result;
             newPreview.width = 40;
             newPreview.height = 44;
-            newPreview.style = 'object-fit: contain;';
+            newPreview.style = 'object-fit: cover;';
             newPreview.alt = 'Превью';
             preview.appendChild(newPreview);
           }
