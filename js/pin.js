@@ -20,17 +20,7 @@
     pinElement.style.top = itemData.location.y + 'px';
     pinElementImg.src = itemData.author.avatar;
     pinElementImg.alt = itemData.offer.description;
-
-    /**
-    * @description Событие открытия окна объявления при клике или нажатие Enter на пин
-    */
-    pinElement.addEventListener('click', function () {
-      var pinPopup = document.querySelector('.map__card');
-      if (window.util.elems.mapElement.contains(pinPopup)) {
-        window.util.elems.mapElement.removeChild(pinPopup);
-      }
-      window.card.showModalOffer(itemData);
-    });
+    pinElement.setAttribute('data-params', JSON.stringify(itemData));
 
     return pinElement;
   };
