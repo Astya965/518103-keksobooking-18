@@ -49,9 +49,9 @@
 
   var removePicture = function (imgContainer) {
     var pictures = imgContainer.querySelectorAll('img');
-    for (var i = pictures.length - 1; i >= 0; i--) {
-      imgContainer.removeChild(pictures[i]);
-    }
+    pictures.forEach(function (picture) {
+      imgContainer.removeChild(picture);
+    });
   };
 
   window.fileInput = {

@@ -1,19 +1,12 @@
 'use strict';
 
 (function () {
-  var mapFilter = document.querySelector('.map__filters');
-  var housingType = mapFilter.querySelector('#housing-type');
-  var housingPrice = mapFilter.querySelector('#housing-price');
-  var housingRooms = mapFilter.querySelector('#housing-rooms');
-  var housingGuests = mapFilter.querySelector('#housing-guests');
-  var housingFeatures = mapFilter.querySelector('#housing-features');
-  var housingWiFi = housingFeatures.querySelector('#filter-wifi');
-  var housingDishwasher = housingFeatures.querySelector('#filter-dishwasher');
-  var housingParking = housingFeatures.querySelector('#filter-parking');
-  var housingWasher = housingFeatures.querySelector('#filter-washer');
-  var housingElevator = housingFeatures.querySelector('#filter-elevator');
-  var housingConditioner = housingFeatures.querySelector('#filter-conditioner');
   var PINS_COUNT = 5;
+  var housingType = window.util.Element.mapFilter.querySelector('#housing-type');
+  var housingPrice = window.util.Element.mapFilter.querySelector('#housing-price');
+  var housingRooms = window.util.Element.mapFilter.querySelector('#housing-rooms');
+  var housingGuests = window.util.Element.mapFilter.querySelector('#housing-guests');
+  var housingFeatures = window.util.Element.mapFilter.querySelector('#housing-features');
 
   /**
   * @description Проверка для каждого элемента массива на основе значения фильтра типа жилья
@@ -23,9 +16,8 @@
   var getHousingType = function (item) {
     if (housingType.value === 'any') {
       return true;
-    } else {
-      return item.offer.type === housingType.value;
     }
+    return item.offer.type === housingType.value;
   };
 
   /**
@@ -36,13 +28,12 @@
   var getHousingPrice = function (item) {
     if (housingPrice.value === 'any') {
       return true;
-    } else {
-      return (
-        ((housingPrice.value === 'low') && (item.offer.price < 10000)) ||
-        ((housingPrice.value === 'high') && (item.offer.price > 50000)) ||
-        ((housingPrice.value === 'middle') && (item.offer.price >= 10000) && (item.offer.price <= 50000))
-      );
     }
+    return (
+      ((housingPrice.value === 'low') && (item.offer.price < 10000)) ||
+      ((housingPrice.value === 'high') && (item.offer.price > 50000)) ||
+      ((housingPrice.value === 'middle') && (item.offer.price >= 10000) && (item.offer.price <= 50000))
+    );
   };
 
   /**
@@ -53,9 +44,8 @@
   var getHousingRooms = function (item) {
     if (housingRooms.value === 'any') {
       return true;
-    } else {
-      return item.offer.rooms === parseInt(housingRooms.value, 10);
     }
+    return item.offer.rooms === parseInt(housingRooms.value, 10);
   };
 
   /**
@@ -66,12 +56,11 @@
   var getHousingGuests = function (item) {
     if (housingGuests.value === 'any') {
       return true;
-    } else {
-      return (
-        ((parseInt(housingGuests.value, 10) !== 0) && (item.offer.guests >= parseInt(housingGuests.value, 10))) ||
-        ((parseInt(housingGuests.value, 10) === 0) && (item.offer.guests === 0))
-      );
     }
+    return (
+      ((parseInt(housingGuests.value, 10) !== 0) && (item.offer.guests >= parseInt(housingGuests.value, 10))) ||
+      ((parseInt(housingGuests.value, 10) === 0) && (item.offer.guests === 0))
+    );
   };
 
   /**
@@ -80,12 +69,17 @@
   * @param {HTMLElement} feature - Фильтр для, которого выполняется проверка
   * @return {Boolean} - Подходит ли удобства под фильтр
   */
-  var getHousingFeatures = function (item, feature) {
-    if (feature.checked === false) {
-      return true;
-    } else {
-      return (item.offer.features.indexOf(feature.value) !== -1);
-    }
+  var getHousingFeatures = function (item) {
+    return Array.from(housingFeatures.children)
+      .filter(function (feature) {
+        return feature.checked === true;
+      })
+      .map(function (feature) {
+        return feature.value;
+      })
+      .every(function (feature) {
+        return item.offer.features.indexOf(feature) !== -1;
+      });
   };
 
   /**
@@ -101,12 +95,7 @@
         getHousingRooms(item) &&
         getHousingGuests(item) &&
         getHousingPrice(item) &&
-        getHousingFeatures(item, housingWiFi) &&
-        getHousingFeatures(item, housingDishwasher) &&
-        getHousingFeatures(item, housingParking) &&
-        getHousingFeatures(item, housingWasher) &&
-        getHousingFeatures(item, housingElevator) &&
-        getHousingFeatures(item, housingConditioner)
+        getHousingFeatures(item)
       );
     })
     .slice(0, PINS_COUNT);
@@ -116,23 +105,23 @@
   * @description Обработчик, закрывает объявления, убирает пины и создает новые на основе требований фильтра
   */
   var onHousingFilter = window.debounce(function () {
-    window.card.closeCard();
-    window.pin.removeOffer();
+    window.card.close();
+    window.pin.remove();
     window.map.showOffersPins(filterAll());
   });
 
   var resetFilters = function () {
-    mapFilter.reset();
+    window.util.Element.mapFilter.reset();
   };
 
   /**
   * @description Событие изменения значения фильтра типа жилья
   */
-  mapFilter.addEventListener('change', onHousingFilter);
+  window.util.Element.mapFilter.addEventListener('change', onHousingFilter);
 
   window.filters = {
     filterAll: filterAll,
-    resetFilters: resetFilters
+    reset: resetFilters
   };
 
 })();

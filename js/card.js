@@ -28,31 +28,31 @@
      */
     var renderFeaturesInPopup = function () {
       popupOfferFeatures.innerHTML = '';
-      for (var i = 0; i < itemData.offer.features.length; i++) {
+      itemData.offer.features.forEach(function (featureName) {
         var createElement = document.createElement('li');
         createElement.classList.add('popup__feature');
-        createElement.classList.add('popup__feature--' + itemData.offer.features[i]);
+        createElement.classList.add('popup__feature--' + featureName);
         popupOfferFeatures.appendChild(createElement);
-      }
+      });
     };
 
     /**
      * @description Отображение фотографий в объявлении для попапа
      */
     var renderPhotosInPopup = function () {
-      for (var j = 0; j < itemData.offer.photos.length; j++) {
+      itemData.offer.photos.forEach(function (photo) {
         var clonedPhotosElement = popupOfferPhotosElement.cloneNode(true);
-        clonedPhotosElement.src = itemData.offer.photos[j];
+        clonedPhotosElement.src = photo;
         popupOfferPhotos.appendChild(clonedPhotosElement);
-      }
+      });
     };
 
     popupOfferTitle.textContent = itemData.offer.title;
     popupOfferAddress.textContent = itemData.offer.address;
     popupOfferPrice.textContent = itemData.offer.price + '₽/ночь';
-    popupOfferType.textContent = window.data.maps.ACCOMMODATION_TYPES_MAP[itemData.offer.type];
-    popupOfferCapacity.textContent = itemData.offer.rooms + ' ' + window.util.functions.connectNounAndNumral(itemData.offer.rooms, window.data.maps.DICTIONARY_ROOMS) +
-    ' для ' + itemData.offer.guests + ' ' + window.util.functions.connectNounAndNumral(itemData.offer.guests, window.data.maps.DICTIONARY_GUESTS);
+    popupOfferType.textContent = window.data.Map.ACCOMMODATION_TYPES[itemData.offer.type];
+    popupOfferCapacity.textContent = itemData.offer.rooms + ' ' + window.util.functions.connectNounAndNumral(itemData.offer.rooms, window.data.Map.ROOMS) +
+    ' для ' + itemData.offer.guests + ' ' + window.util.functions.connectNounAndNumral(itemData.offer.guests, window.data.Map.GUESTS);
     popupOfferTime.textContent = 'Заезд после ' + itemData.offer.checkin + ', выезд до ' + itemData.offer.checkout;
     renderFeaturesInPopup(itemData);
     popupOfferDescription.textContent = itemData.offer.description;
@@ -60,8 +60,8 @@
     renderPhotosInPopup(itemData);
     popupOfferAvatar.src = itemData.author.avatar;
 
-    window.util.elems.mapElement.appendChild(popupOfferElement);
-    window.util.elems.mapElement.insertBefore(popupOfferElement, mapFilters);
+    window.util.Element.map.appendChild(popupOfferElement);
+    window.util.Element.map.insertBefore(popupOfferElement, mapFilters);
   };
 
   /**
@@ -82,14 +82,14 @@
   var closeCard = function () {
     var pinPopup = document.querySelector('.map__card');
     if (pinPopup) {
-      window.util.elems.mapElement.removeChild(pinPopup);
+      window.util.Element.map.removeChild(pinPopup);
     }
   };
 
   /**
    * @description Открытие попапа с информацией об объявлении при клике на пин (при помощи делегирования)
    */
-  window.util.elems.mapPinsContainer.addEventListener('click', function (evt) {
+  window.util.Element.mapPinsContainer.addEventListener('click', function (evt) {
     closeCard();
     openCard(evt);
   });
@@ -97,8 +97,8 @@
   /**
    * @description Открытие попапа с информацией об объявлении при нажатии Enter с фокусом на пине (при помощи делегирования)
    */
-  window.util.elems.mapPinsContainer.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.keycode.ENTER_KEYCODE) {
+  window.util.Element.mapPinsContainer.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === window.util.Keycode.ENTER) {
       openCard(evt);
     }
   });
@@ -107,7 +107,7 @@
    * @description Зыкрытие попапа с информацией об объявлении при нажатии ECS
    */
   document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.keycode.ESC_KEYCODE) {
+    if (evt.keyCode === window.util.keycode.ESC) {
       closeCard();
     }
   });
@@ -122,8 +122,7 @@
   });
 
   window.card = {
-    showModalOffer: showModalOffer,
-    closeCard: closeCard
+    close: closeCard
   };
 
 })();

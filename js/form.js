@@ -1,37 +1,33 @@
 'use strict';
 
 (function () {
-  var adFormTitleInput = window.util.elems.adForm.querySelector('#title');
-  var adFormAdressInput = window.util.elems.adForm.querySelector('#address');
-  var adFormAccommodationInput = window.util.elems.adForm.querySelector('#type');
-  var adFormPriceInput = window.util.elems.adForm.querySelector('#price');
-  var adFormTimeinInput = window.util.elems.adForm.querySelector('#timein');
-  var adFormTimeoutInput = window.util.elems.adForm.querySelector('#timeout');
-  var adFormRoomsInput = window.util.elems.adForm.querySelector('#room_number');
-  var adFormCapacityInput = window.util.elems.adForm.querySelector('#capacity');
-  var adFormCapacityOptions = adFormCapacityInput.querySelectorAll('option');
-  var adFormAvatarInput = window.util.elems.adForm.querySelector('#avatar');
-  var adFormAvatarPreview = window.util.elems.adForm.querySelector('.ad-form-header__preview').querySelector('img');
-  var adFormImgInput = window.util.elems.adForm.querySelector('#images');
-  var adFormImgPreview = window.util.elems.adForm.querySelector('.ad-form__photo');
-  var adFormAccommodationSelected = adFormAccommodationInput.querySelector('option[selected]');
-  var adFormReset = window.util.elems.adForm.querySelector('.ad-form__reset');
   var PREVIEW_IMG = 'img/muffin-grey.svg';
+  var adFormTitleInput = window.util.Element.adForm.querySelector('#title');
+  var adFormAdressInput = window.util.Element.adForm.querySelector('#address');
+  var adFormAccommodationInput = window.util.Element.adForm.querySelector('#type');
+  var adFormPriceInput = window.util.Element.adForm.querySelector('#price');
+  var adFormTimeinInput = window.util.Element.adForm.querySelector('#timein');
+  var adFormTimeoutInput = window.util.Element.adForm.querySelector('#timeout');
+  var adFormRoomsInput = window.util.Element.adForm.querySelector('#room_number');
+  var adFormCapacityInput = window.util.Element.adForm.querySelector('#capacity');
+  var adFormCapacityOptions = adFormCapacityInput.querySelectorAll('option');
+  var adFormAvatarInput = window.util.Element.adForm.querySelector('#avatar');
+  var adFormAvatarPreview = window.util.Element.adForm.querySelector('.ad-form-header__preview').querySelector('img');
+  var adFormImgInput = window.util.Element.adForm.querySelector('#images');
+  var adFormImgPreview = window.util.Element.adForm.querySelector('.ad-form__photo');
+  var adFormAccommodationSelected = adFormAccommodationInput.querySelector('option[selected]');
+  var adFormReset = window.util.Element.adForm.querySelector('.ad-form__reset');
 
   /**
    * Передача координат острого конца метки в поле адреса (форма создания объявления)
    * @param {Boolean} isStartingPosition - Находится ли объект на стратовой позиции (true/false)
    */
   var setPinCoordinates = function (isStartingPosition) {
-    var pinX = window.util.elems.pinButton.style.left.slice(0, -2);
-    var pinY = window.util.elems.pinButton.style.top.slice(0, -2);
+    var pinX = window.util.Element.pinButton.style.left.slice(0, -2);
+    var pinY = window.util.Element.pinButton.style.top.slice(0, -2);
     pinX = Math.round(+pinX + window.data.const.ADJUSTMENT_MAIN_X);
 
-    if (isStartingPosition) {
-      pinY = Math.round(+pinY + (window.data.const.PIN_HEIGTH / 2));
-    } else {
-      pinY = Math.round(+pinY + window.data.const.ADJUSTMENT_MAIN_Y);
-    }
+    pinY = isStartingPosition ? Math.round(+pinY + (window.data.const.PIN_HEIGTH / 2)) : Math.round(+pinY + window.data.const.ADJUSTMENT_MAIN_Y);
 
     var pinCoordinates = pinX + ', ' + pinY;
 
@@ -103,8 +99,8 @@
    * в зависимости от значения «Тип жилья»
    */
   var setPriceMinValue = function () {
-    adFormPriceInput.min = window.data.maps.ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationInput.value];
-    adFormPriceInput.placeholder = window.data.maps.ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationInput.value];
+    adFormPriceInput.min = window.data.Map.ACCOMMODATION_TYPE_TO_PRICE[adFormAccommodationInput.value];
+    adFormPriceInput.placeholder = window.data.Map.ACCOMMODATION_TYPE_TO_PRICE[adFormAccommodationInput.value];
   };
 
   var resetPictures = function () {
@@ -130,8 +126,8 @@
    * @description Очистить поля ввода у формы и установить изначальные значения min и placehplder поля цены
    */
   var resetForm = function () {
-    window.util.elems.adForm.reset();
-    window.filters.resetFilters();
+    window.util.Element.adForm.reset();
+    window.filters.reset();
     setPriceMinValue();
     resetPictures();
   };
@@ -143,11 +139,11 @@
     window.map.deactivatePage();
     resetForm();
     setOptionsForRooms();
-    window.pin.removeOffer();
-    window.card.closeCard();
-    window.pin.setPinStartPosition();
+    window.pin.remove();
+    window.card.close();
+    window.pin.setStartPosition();
     setPinCoordinates(true);
-    window.util.elems.mapElement.classList.add('map--faded');
+    window.util.Element.map.classList.add('map--faded');
   };
 
   /**
@@ -212,28 +208,26 @@
   adFormReset.addEventListener('click', function (evt) {
     evt.preventDefault();
     deactivateForm();
-    adFormPriceInput.min = window.data.maps.ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationSelected.value];
-    adFormPriceInput.placeholder = window.data.maps.ACCOMMODATION_TYPE_TO_PRICE_MAP[adFormAccommodationSelected.value];
+    adFormPriceInput.min = window.data.Map.ACCOMMODATION_TYPE_TO_PRICE[adFormAccommodationSelected.value];
+    adFormPriceInput.placeholder = window.data.Map.ACCOMMODATION_TYPE_TO_PRICE[adFormAccommodationSelected.value];
   });
 
   /**
    * @description Обработчик события отправки данных формы формы
    */
-  window.util.elems.adForm.addEventListener('submit', function (evt) {
+  window.util.Element.adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(window.util.elems.adForm), function () {
+    window.backend.save(new FormData(window.util.Element.adForm), function () {
       deactivateForm();
       window.util.functions.onSuccess();
     }, window.util.functions.onError);
   });
 
   window.form = {
-    functions: {
-      setPinCoordinates: setPinCoordinates,
-      setOptionsForRooms: setOptionsForRooms,
-      setPriceMinValue: setPriceMinValue,
-      deactivateForm: deactivateForm
-    }
+    setPinCoordinates: setPinCoordinates,
+    setOptionsForRooms: setOptionsForRooms,
+    setPriceMinValue: setPriceMinValue,
+    deactivateForm: deactivateForm
   };
 
 })();

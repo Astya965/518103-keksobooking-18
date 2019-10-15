@@ -8,11 +8,19 @@
   };
 
   /**
+  * @description Установка главного пина на старотвую позицию
+  */
+  var setPinStartPosition = function () {
+    window.util.Element.pinButton.style.left = window.data.const.START_COORDINATES.x + 'px';
+    window.util.Element.pinButton.style.top = window.data.const.START_COORDINATES.y + 'px';
+  };
+
+  /**
   * Генерация пина похожeго объявления
   * @param {Object} itemData - Данные объявления, которые передаются в пин
   * @return {HTMLElemet} Шаблон для генерации пина похожeго объявления
   */
-  var renderOffer = function (itemData) {
+  var renderPin = function (itemData) {
     var pinElement = offersTimplate.cloneNode(true);
     var pinElementImg = pinElement.querySelector('img');
 
@@ -26,27 +34,19 @@
   };
 
   /**
-  * @description Установка главного пина на старотвую позицию
-  */
-  var setPinStartPosition = function () {
-    window.util.elems.pinButton.style.left = window.data.const.START_COORDINATES.x + 'px';
-    window.util.elems.pinButton.style.top = window.data.const.START_COORDINATES.y + 'px';
-  };
-
-  /**
   * @description Удаление пинов похожих объявлений
   */
   var removeOffer = function () {
     var offers = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = offers.length - 1; i >= 0; i--) {
-      window.util.elems.mapPinsContainer.removeChild(offers[i]);
-    }
+    offers.forEach(function (pin) {
+      window.util.Element.mapPinsContainer.removeChild(pin);
+    });
   };
 
   /**
    * @description При нажатии и удержании появляется возможность перемещать пин, если страница уже активна
    */
-  window.util.elems.pinButton.addEventListener('mousedown', function (evt) {
+  window.util.Element.pinButton.addEventListener('mousedown', function (evt) {
     var startCoordinates = new Coordinates(evt.clientX, evt.clientY);
 
     var onMouseMove = function (moveEvt) {
@@ -60,8 +60,8 @@
       startCoordinates = new Coordinates(moveEvt.clientX, moveEvt.clientY);
 
       var offsetCoords = new Coordinates(
-          window.util.elems.pinButton.offsetLeft - shift.x,
-          window.util.elems.pinButton.offsetTop - shift.y
+          window.util.Element.pinButton.offsetLeft - shift.x,
+          window.util.Element.pinButton.offsetTop - shift.y
       );
 
       if (offsetCoords.x < MAP_MIN_X) {
@@ -74,10 +74,10 @@
         offsetCoords.y = MAP_MAX_Y;
       }
 
-      window.util.elems.pinButton.style.top = offsetCoords.y + 'px';
-      window.util.elems.pinButton.style.left = offsetCoords.x + 'px';
+      window.util.Element.pinButton.style.top = offsetCoords.y + 'px';
+      window.util.Element.pinButton.style.left = offsetCoords.x + 'px';
 
-      window.form.functions.setPinCoordinates(false);
+      window.form.setPinCoordinates(false);
     };
 
     var onMouseUp = function () {
@@ -90,9 +90,9 @@
   });
 
   window.pin = {
-    renderOffer: renderOffer,
-    removeOffer: removeOffer,
-    setPinStartPosition: setPinStartPosition
+    render: renderPin,
+    remove: removeOffer,
+    setStartPosition: setPinStartPosition
   };
 
 })();
