@@ -14,7 +14,7 @@
   var adFormAvatarInput = window.util.Element.adForm.querySelector('#avatar');
   var adFormAvatarPreview = window.util.Element.adForm.querySelector('.ad-form-header__preview').querySelector('img');
   var adFormImgInput = window.util.Element.adForm.querySelector('#images');
-  var adFormImgPreview = window.util.Element.adForm.querySelector('.ad-form__photo');
+  var adFormImgPreview = window.util.Element.adForm.querySelector('.ad-form__photo-container');
   var adFormAccommodationSelected = adFormAccommodationInput.querySelector('option[selected]');
   var adFormReset = window.util.Element.adForm.querySelector('.ad-form__reset');
 
@@ -219,8 +219,8 @@
     evt.preventDefault();
     window.backend.save(new FormData(window.util.Element.adForm), function () {
       deactivateForm();
-      window.util.functions.onSuccess();
-    }, window.util.functions.onError);
+      window.util.onSuccess();
+    }, window.util.onError);
   });
 
   window.form = {

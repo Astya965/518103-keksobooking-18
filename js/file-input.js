@@ -34,11 +34,11 @@
           } else {
             var newPreview = document.createElement('img');
             newPreview.src = reader.result;
-            newPreview.width = 40;
-            newPreview.height = 44;
-            newPreview.style = 'object-fit: cover;';
+            newPreview.width = 70;
+            newPreview.height = 70;
+            newPreview.style = 'object-fit: cover; margin-bottom: 8px; margin-right: 10px;';
             newPreview.alt = 'Превью';
-            preview.appendChild(newPreview);
+            preview.insertBefore(newPreview, preview.children[preview.children.length - 1]);
           }
         });
 

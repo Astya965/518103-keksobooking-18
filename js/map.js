@@ -35,17 +35,17 @@
     window.backend.load(function (data) {
       window.defaultData = data;
       showOffersPins(window.filters.filterAll());
-    }, window.util.functions.onError);
+    }, window.util.onError);
   };
 
   /**
    * @description Неактивное состояние страницы, формы заблокированы
    */
   var deactivatePage = function () {
-    window.util.functions.toggleEnableElements(mapFiltersFormSelects, true);
-    window.util.functions.toggleEnableElements(mapFiltersFormFieldsets, true);
-    window.util.functions.toggleEnableElements(adFormFieldsets, true);
-    window.util.functions.toggleEnableElements(adFormSelects, true);
+    window.util.toggleEnableElements(mapFiltersFormSelects, true);
+    window.util.toggleEnableElements(mapFiltersFormFieldsets, true);
+    window.util.toggleEnableElements(adFormFieldsets, true);
+    window.util.toggleEnableElements(adFormSelects, true);
     window.form.setPinCoordinates(true);
     if (!window.util.Element.adForm.classList.contains('ad-form--disabled')) {
       window.util.Element.adForm.classList.add('ad-form--disabled');
@@ -61,10 +61,10 @@
       return;
     }
     window.util.Element.adForm.classList.remove('ad-form--disabled');
-    window.util.functions.toggleEnableElements(mapFiltersFormSelects, false);
-    window.util.functions.toggleEnableElements(mapFiltersFormFieldsets, false);
-    window.util.functions.toggleEnableElements(adFormFieldsets, false);
-    window.util.functions.toggleEnableElements(adFormSelects, false);
+    window.util.toggleEnableElements(mapFiltersFormSelects, false);
+    window.util.toggleEnableElements(mapFiltersFormFieldsets, false);
+    window.util.toggleEnableElements(adFormFieldsets, false);
+    window.util.toggleEnableElements(adFormSelects, false);
 
     window.form.setPinCoordinates(false);
     window.form.setOptionsForRooms();

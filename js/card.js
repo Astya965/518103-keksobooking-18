@@ -51,8 +51,8 @@
     popupOfferAddress.textContent = itemData.offer.address;
     popupOfferPrice.textContent = itemData.offer.price + '₽/ночь';
     popupOfferType.textContent = window.data.Map.ACCOMMODATION_TYPES[itemData.offer.type];
-    popupOfferCapacity.textContent = itemData.offer.rooms + ' ' + window.util.functions.connectNounAndNumral(itemData.offer.rooms, window.data.Map.ROOMS) +
-    ' для ' + itemData.offer.guests + ' ' + window.util.functions.connectNounAndNumral(itemData.offer.guests, window.data.Map.GUESTS);
+    popupOfferCapacity.textContent = itemData.offer.rooms + ' ' + window.util.connectNounAndNumral(itemData.offer.rooms, window.data.Map.ROOMS) +
+    ' для ' + itemData.offer.guests + ' ' + window.util.connectNounAndNumral(itemData.offer.guests, window.data.Map.GUESTS);
     popupOfferTime.textContent = 'Заезд после ' + itemData.offer.checkin + ', выезд до ' + itemData.offer.checkout;
     renderFeaturesInPopup(itemData);
     popupOfferDescription.textContent = itemData.offer.description;
