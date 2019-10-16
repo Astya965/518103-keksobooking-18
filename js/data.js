@@ -1,17 +1,9 @@
 'use strict';
 
 (function () {
-
-  var ACCOMMODATION_TYPES_MAP = {
-    'any': 'Любой тип жилья',
-    'flat': 'Квартира',
-    'bungalo': 'Бунгало',
-    'house': 'Дом',
-    'palace': 'Дворец'
-  };
-  var START_COORDINATES = {
-    x: 570,
-    y: 375
+  var StartCoordinate = {
+    X: 570,
+    Y: 375
   };
   var Map = {
     MIN_X: 0,
@@ -27,6 +19,24 @@
   var Adjustment = {
     X: Pin.WIDTH / 2,
     Y: Pin.HEIGTH + Pin.TAIL_HEIGHT
+  };
+  var Price = {
+    Type: {
+      LOW: 'low',
+      MIDDLE: 'middle',
+      HIGH: 'high'
+    },
+    Value: {
+      MIN: 10000,
+      MAX: 50000
+    }
+  };
+  var ACCOMMODATION_TYPES_MAP = {
+    'any': 'Любой тип жилья',
+    'flat': 'Квартира',
+    'bungalo': 'Бунгало',
+    'house': 'Дом',
+    'palace': 'Дворец'
   };
   var ROOMS_MAP = {
     'one': 'комната',
@@ -54,14 +64,15 @@
     },
 
     const: {
-      START_COORDINATES: START_COORDINATES,
+      StartCoordinate: StartCoordinate,
+      Price: Price,
       PIN_HEIGTH: Pin.HEIGTH,
       ADJUSTMENT_MAIN_X: Adjustment.X,
       ADJUSTMENT_MAIN_Y: Adjustment.Y,
       MIN_X: Map.MIN_X,
       MAX_X: Map.MAX_X,
       MIN_Y: Map.MIN_Y,
-      MAX_Y: Map.MAX_Y
+      MAX_Y: Map.MAX_Y,
     }
   };
 

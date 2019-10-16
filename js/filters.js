@@ -26,14 +26,16 @@
   * @return {Boolean} - Подходит ли цена под фильтр
   */
   var getHousingPrice = function (item) {
-    if (housingPrice.value === 'any') {
-      return true;
+    switch (housingPrice.value) {
+      case window.data.const.Price.Type.LOW:
+        return item.offer.price < window.data.const.Price.Value.MIN;
+      case window.data.const.Price.Type.MIDDLE:
+        return item.offer.price >= window.data.const.Price.Value.MIN && item.offer.price <= window.data.const.Price.Value.MAX;
+      case window.data.const.Price.Type.HIGH:
+        return item.offer.price > window.data.const.Price.Value.MAX;
+      default:
+        return true;
     }
-    return (
-      ((housingPrice.value === 'low') && (item.offer.price < 10000)) ||
-      ((housingPrice.value === 'high') && (item.offer.price > 50000)) ||
-      ((housingPrice.value === 'middle') && (item.offer.price >= 10000) && (item.offer.price <= 50000))
-    );
   };
 
   /**

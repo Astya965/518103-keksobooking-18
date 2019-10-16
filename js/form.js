@@ -25,13 +25,11 @@
   var setPinCoordinates = function (isStartingPosition) {
     var pinX = window.util.Element.pinButton.style.left.slice(0, -2);
     var pinY = window.util.Element.pinButton.style.top.slice(0, -2);
-    pinX = Math.round(+pinX + window.data.const.ADJUSTMENT_MAIN_X);
 
+    pinX = Math.round(+pinX + window.data.const.ADJUSTMENT_MAIN_X);
     pinY = isStartingPosition ? Math.round(+pinY + (window.data.const.PIN_HEIGTH / 2)) : Math.round(+pinY + window.data.const.ADJUSTMENT_MAIN_Y);
 
-    var pinCoordinates = pinX + ', ' + pinY;
-
-    adFormAdressInput.value = pinCoordinates;
+    adFormAdressInput.value = pinX + ', ' + pinY;
   };
 
   /**

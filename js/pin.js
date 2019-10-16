@@ -11,8 +11,8 @@
   * @description Установка главного пина на старотвую позицию
   */
   var setPinStartPosition = function () {
-    window.util.Element.pinButton.style.left = window.data.const.START_COORDINATES.x + 'px';
-    window.util.Element.pinButton.style.top = window.data.const.START_COORDINATES.y + 'px';
+    window.util.Element.pinButton.style.left = window.data.const.StartCoordinate.X + 'px';
+    window.util.Element.pinButton.style.top = window.data.const.StartCoordinate.Y + 'px';
   };
 
   /**

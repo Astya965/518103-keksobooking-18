@@ -111,7 +111,7 @@
 
   window.util = {
     Keycode: {
-      ESC: KeyCode.ECS,
+      ESC: KeyCode.ESC,
       ENTER: KeyCode.ENTER
     },
 

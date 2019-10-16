@@ -98,7 +98,7 @@
    * @description Открытие попапа с информацией об объявлении при нажатии Enter с фокусом на пине (при помощи делегирования)
    */
   window.util.Element.mapPinsContainer.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.Keycode.ENTER) {
+    if (evt.keyCode === window.util.Keyсode.ENTER) {
       openCard(evt);
     }
   });
@@ -107,7 +107,7 @@
    * @description Зыкрытие попапа с информацией об объявлении при нажатии ECS
    */
   document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.keycode.ESC) {
+    if (evt.keyCode === window.util.Keyсode.ESC) {
       closeCard();
     }
   });
