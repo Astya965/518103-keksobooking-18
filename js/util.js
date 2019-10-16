@@ -2,52 +2,20 @@
 
 (function () {
 
-  var ESC_KEYCODE = 27;
+  var KeyCode = {
+    ENTER: 13,
+    ESC: 27
+  };
 
-  var mainElement = document.querySelector('main');
-  var mapElement = document.querySelector('.map');
+  var main = document.querySelector('main');
+  var map = document.querySelector('.map');
   var adForm = document.querySelector('.ad-form');
+  var mapFilter = document.querySelector('.map__filters');
   var mapPinsContainer = document.querySelector('.map__pins');
-  var pinButton = mapElement.querySelector('.map__pin--main');
+  var pinButton = map.querySelector('.map__pin--main');
 
   var errorTemplate = document.querySelector('#error').content.querySelector('.error');
   var successTemplate = document.querySelector('#success').content.querySelector('.success');
-
-  /**
-   * Выбор случайного числа в заданном промежутке
-   * @param {Number} min - Минимальное допустимое значение (включительно)
-   * @param {Number} max - Максимальное допустимое значение (включительно)
-   * @return {Number} Случайное целое число
-   */
-  var getRandomNumber = function (min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
-  };
-
-  /**
-   * Выбор случайного элемента массива
-   * @param {Array} array
-   * @return {Any} Случайный элемент массива
-   */
-  var getRandomElement = function (array) {
-    var randomIndex = Math.floor(Math.random() * (array.length));
-    return array[randomIndex];
-  };
-
-  /**
-   * Перемешивание массива (на основе алгоритма Фишера-Йетса)
-   * @param {Array} array - Массив, который нужно перемешать
-   * @return {Array} Перемешенный массив
-   */
-  var mixArray = function (array) {
-    for (var i = array.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var swap = array[j];
-      array[j] = array[i];
-      array[i] = swap;
-    }
-
-    return array;
-  };
 
   /**
    * Добавляет или убирает атрибут disabled всем элементам коллекции
@@ -56,9 +24,9 @@
    * (True - для деактивации и False - для активации)
    */
   var toggleEnableElements = function (collection, needDeactivate) {
-    for (var i = 0; i < collection.length; i++) {
-      collection[i].disabled = needDeactivate;
-    }
+    collection.forEach(function (item) {
+      item.disabled = needDeactivate;
+    });
   };
 
   /**
@@ -92,18 +60,18 @@
     var noticeMessageArea = noticeElement.querySelector('p');
 
     var onEscPress = function (evt) {
-      if ((evt.keyCode === ESC_KEYCODE) && (mainElement.contains(noticeElement))) {
-        window.form.functions.deactivateForm();
-        mainElement.removeChild(noticeElement);
+      if ((evt.keyCode === KeyCode.Ecs) && (main.contains(noticeElement))) {
+        window.form.deactivateForm();
+        main.removeChild(noticeElement);
       }
       document.removeEventListener('keydown', onEscPress);
     };
     document.addEventListener('keydown', onEscPress);
 
     noticeElement.addEventListener('click', function (evt) {
-      if ((evt.target !== noticeMessageArea) && (mainElement.contains(noticeElement))) {
-        window.form.functions.deactivateForm();
-        mainElement.removeChild(noticeElement);
+      if ((evt.target !== noticeMessageArea) && (main.contains(noticeElement))) {
+        window.form.deactivateForm();
+        main.removeChild(noticeElement);
         document.removeEventListener('keydown', onEscPress);
       }
     });
@@ -115,14 +83,14 @@
       errorMessage.textContent = noticeMessage;
 
       errorButton.addEventListener('click', function () {
-        window.form.functions.deactivateForm();
-        mainElement.removeChild(noticeElement);
+        window.form.deactivateForm();
+        main.removeChild(noticeElement);
         document.removeEventListener('keydown', onEscPress);
       });
     }
 
-    if (!mainElement.contains(noticeElement)) {
-      mainElement.appendChild(noticeElement);
+    if (!main.contains(noticeElement)) {
+      main.appendChild(noticeElement);
     }
   };
 
@@ -142,26 +110,23 @@
   };
 
   window.util = {
-    keycode: {
-      ESC_KEYCODE: ESC_KEYCODE
+    Keycode: {
+      ESC: KeyCode.ECS,
+      ENTER: KeyCode.ENTER
     },
 
-    functions: {
-      getRandomNumber: getRandomNumber,
-      getRandomElement: getRandomElement,
-      mixArray: mixArray,
-      toggleEnableElements: toggleEnableElements,
-      connectNounAndNumral: connectNounAndNumral,
-      onError: onError,
-      onSuccess: onSuccess
-    },
-
-    elems: {
-      mapElement: mapElement,
+    Element: {
+      map: map,
       adForm: adForm,
+      mapFilter: mapFilter,
       mapPinsContainer: mapPinsContainer,
       pinButton: pinButton
-    }
+    },
+
+    toggleEnableElements: toggleEnableElements,
+    connectNounAndNumral: connectNounAndNumral,
+    onError: onError,
+    onSuccess: onSuccess
   };
 
 })();
