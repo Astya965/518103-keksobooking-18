@@ -60,7 +60,7 @@
     var noticeMessageArea = noticeElement.querySelector('p');
 
     var onEscPress = function (evt) {
-      if ((evt.keyCode === KeyCode.Ecs) && (main.contains(noticeElement))) {
+      if ((evt.keyCode === KeyCode.ESC) && (main.contains(noticeElement))) {
         window.form.deactivateForm();
         main.removeChild(noticeElement);
       }
